@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Scene Hierarchy</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0a0a0a;
+            color: #ffffff;
+            overflow: hidden;
+            /* Prevent zooming */
+            -webkit-text-size-adjust: 100%;
+            -ms-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+            /* Prevent user selection and zoom */
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            /* Prevent touch zoom */
+            touch-action: manipulation;
+        }
+        
+        #root {
+            /* Prevent zooming */
+            -webkit-text-size-adjust: 100%;
+            -ms-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+            /* Fixed size to prevent scaling */
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+        /* Main container */
+        .border {
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .rounded-lg {
+            border-radius: 8px;
+        }
+        
+        .overflow-hidden {
+            overflow: hidden;
+        }
+        
+        .bg-gradient-to-br {
+            background: linear-gradient(to bottom right, #1a1a1a, #1a1a1a80);
+        }
+        
+        .from-card {
+            --tw-gradient-from: #1a1a1a;
+            --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(26, 26, 26, 0));
+        }
+        
+        .to-card\/80 {
+            --tw-gradient-to: rgba(26, 26, 26, 0.8);
+        }
+        
+        .shadow-lg {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        
+        .shadow-black\/5 {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        
+        .h-full {
+            height: 100%;
+        }
+        
+        .border-r {
+            border-right-width: 1px;
+        }
+        
+        .border-border\/50 {
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .panel-shadow {
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+        }
+        
+        /* Header */
+        .h-10 {
+            height: 40px;
+        }
+        
+        .bg-gradient-to-r {
+            background: linear-gradient(to right, var(--tw-gradient-stops));
+        }
+        
+        .from-muted\/50 {
+            --tw-gradient-from: rgba(255, 255, 255, 0.05);
+            --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(255, 255, 255, 0));
+        }
+        
+        .to-muted\/30 {
+            --tw-gradient-to: rgba(255, 255, 255, 0.03);
+        }
+        
+        .border-b {
+            border-bottom-width: 1px;
+        }
+        
+        .border-border {
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .flex {
+            display: flex;
+        }
+        
+        .items-center {
+            align-items: center;
+        }
+        
+        .px-3 {
+            padding-left: 12px;
+            padding-right: 12px;
+        }
+        
+        .mr-2 {
+            margin-right: 8px;
+        }
+        
+        .h-4 {
+            height: 16px;
+        }
+        
+        .w-4 {
+            width: 16px;
+        }
+        
+        .text-sm {
+            font-size: 14px;
+            line-height: 20px;
+        }
+        
+        .font-medium {
+            font-weight: 500;
+        }
+        
+        .text-foreground {
+            color: #ffffff;
+        }
+        
+        /* Content area */
+        .flex-1 {
+            flex: 1 1 0%;
+        }
+        
+        .p-4 {
+            padding: 16px;
+        }
+        
+        .overflow-auto {
+            overflow: auto;
+        }
+        
+        .mb-4 {
+            margin-bottom: 16px;
+        }
+        
+        /* Search container */
+        .relative {
+            position: relative;
+        }
+        
+        .absolute {
+            position: absolute;
+        }
+        
+        .left-3 {
+            left: 12px;
+        }
+        
+        .top-1\/2 {
+            top: 50%;
+        }
+        
+        .transform {
+            transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+        }
+        
+        .-translate-y-1\/2 {
+            --tw-translate-y: -50%;
+            transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+        }
+        
+        .text-muted-foreground {
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        .space-y-1 > * + * {
+            margin-top: 4px;
+        }
+        
+        /* Search input */
+        .flex {
+            display: flex;
+        }
+        
+        .h-9 {
+            height: 36px;
+        }
+        
+        .w-full {
+            width: 100%;
+        }
+        
+        .rounded-md {
+            border-radius: 6px;
+        }
+        
+        .border {
+            border-width: 1px;
+        }
+        
+        .px-3 {
+            padding-left: 12px;
+            padding-right: 12px;
+        }
+        
+        .py-1 {
+            padding-top: 4px;
+            padding-bottom: 4px;
+        }
+        
+        .text-sm {
+            font-size: 14px;
+            line-height: 20px;
+        }
+        
+        .text-foreground {
+            color: #ffffff;
+        }
+        
+        .placeholder\:text-muted-foreground::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        .transition-all {
+            transition-property: all;
+            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+            transition-duration: 150ms;
+        }
+        
+        .duration-200 {
+            transition-duration: 200ms;
+        }
+        
+        .focus-visible\:outline-none:focus-visible {
+            outline: 2px solid transparent;
+            outline-offset: 2px;
+        }
+        
+        .focus-visible\:ring-2:focus-visible {
+            --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
+            --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);
+            box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
+        }
+        
+        .focus-visible\:ring-ring:focus-visible {
+            --tw-ring-color: #ff6b35;
+        }
+        
+        .focus-visible\:ring-offset-0:focus-visible {
+            --tw-ring-offset-width: 0px;
+        }
+        
+        .focus-visible\:border-accent:focus-visible {
+            border-color: #ff6b35;
+        }
+        
+        .focus-visible\:shadow-md:focus-visible {
+            --tw-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
+        }
+        
+        .focus-visible\:shadow-accent\/20:focus-visible {
+            --tw-shadow: 0 4px 6px -1px rgba(255, 107, 53, 0.2), 0 2px 4px -1px rgba(255, 107, 53, 0.2);
+            box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
+        }
+        
+        .disabled\:cursor-not-allowed:disabled {
+            cursor: not-allowed;
+        }
+        
+        .disabled\:opacity-50:disabled {
+            opacity: 0.5;
+        }
+        
+        .bg-gradient-to-r {
+            background: linear-gradient(to right, var(--tw-gradient-stops));
+        }
+        
+        .from-input {
+            --tw-gradient-from: #1a1a1a;
+            --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(26, 26, 26, 0));
+        }
+        
+        .to-input\/90 {
+            --tw-gradient-to: rgba(26, 26, 26, 0.9);
+        }
+        
+        .pl-10 {
+            padding-left: 40px;
+        }
+        
+        .glass-effect {
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+        
+        /* Objects container */
+        .space-y-2 > * + * {
+            margin-top: 8px;
+        }
+        
+        /* Object items */
+        .gap-3 {
+            gap: 12px;
+        }
+        
+        .p-3 {
+            padding: 12px;
+        }
+        
+        .rounded-xl {
+            border-radius: 12px;
+        }
+        
+        .hover\:bg-gradient-to-r:hover {
+            background: linear-gradient(to right, var(--tw-gradient-stops));
+        }
+        
+        .hover\:from-accent\/15:hover {
+            --tw-gradient-from: rgba(255, 107, 53, 0.15);
+            --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(255, 107, 53, 0));
+        }
+        
+        .hover\:to-accent\/5:hover {
+            --tw-gradient-to: rgba(255, 107, 53, 0.05);
+        }
+        
+        .hover\:from-primary\/15:hover {
+            --tw-gradient-from: rgba(255, 140, 66, 0.15);
+            --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(255, 140, 66, 0));
+        }
+        
+        .hover\:to-primary\/5:hover {
+            --tw-gradient-to: rgba(255, 140, 66, 0.05);
+        }
+        
+        .hover\:from-secondary\/15:hover {
+            --tw-gradient-from: rgba(255, 255, 255, 0.15);
+            --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(255, 255, 255, 0));
+        }
+        
+        .hover\:to-secondary\/5:hover {
+            --tw-gradient-to: rgba(255, 255, 255, 0.05);
+        }
+        
+        .cursor-pointer {
+            cursor: pointer;
+        }
+        
+        .transition-all {
+            transition-property: all;
+            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+            transition-duration: 150ms;
+        }
+        
+        .duration-300 {
+            transition-duration: 300ms;
+        }
+        
+        .group {
+            --tw-bg-opacity: 1;
+        }
+        
+        .border-transparent {
+            border-color: transparent;
+        }
+        
+        .hover\:border-accent\/20:hover {
+            border-color: rgba(255, 107, 53, 0.2);
+        }
+        
+        .hover\:border-primary\/20:hover {
+            border-color: rgba(255, 140, 66, 0.2);
+        }
+        
+        .hover\:border-secondary\/20:hover {
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+        
+        .hover\:panel-shadow-hover:hover {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        
+        .hover\:shadow-md:hover {
+            --tw-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
+        }
+        
+        /* Selected state */
+        .bg-gradient-to-r.from-primary\/20.to-primary\/10 {
+            background: linear-gradient(to right, rgba(255, 140, 66, 0.2), rgba(255, 140, 66, 0.1));
+        }
+        
+        .border-primary\/30 {
+            border-color: rgba(255, 140, 66, 0.3);
+        }
+        
+        /* Icon containers */
+        .w-8 {
+            width: 32px;
+        }
+        
+        .h-8 {
+            height: 32px;
+        }
+        
+        .bg-gradient-to-br {
+            background: linear-gradient(to bottom right, var(--tw-gradient-stops));
+        }
+        
+        .from-accent\/20 {
+            --tw-gradient-from: rgba(255, 107, 53, 0.2);
+            --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(255, 107, 53, 0));
+        }
+        
+        .to-accent\/10 {
+            --tw-gradient-to: rgba(255, 107, 53, 0.1);
+        }
+        
+        .from-primary\/20 {
+            --tw-gradient-from: rgba(255, 140, 66, 0.2);
+            --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(255, 140, 66, 0));
+        }
+        
+        .to-primary\/10 {
+            --tw-gradient-to: rgba(255, 140, 66, 0.1);
+        }
+        
+        .from-secondary\/20 {
+            --tw-gradient-from: rgba(255, 255, 255, 0.2);
+            --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(255, 255, 255, 0));
+        }
+        
+        .to-secondary\/10 {
+            --tw-gradient-to: rgba(255, 255, 255, 0.1);
+        }
+        
+        .rounded-lg {
+            border-radius: 8px;
+        }
+        
+        .flex {
+            display: flex;
+        }
+        
+        .items-center {
+            align-items: center;
+        }
+        
+        .justify-center {
+            justify-content: center;
+            justify-content: center;
+        }
+        
+        .group-hover\:from-accent\/30.group:hover {
+            --tw-gradient-from: rgba(255, 107, 53, 0.3);
+            --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(255, 107, 53, 0));
+        }
+        
+        .group-hover\:to-accent\/20.group:hover {
+            --tw-gradient-to: rgba(255, 107, 53, 0.2);
+        }
+        
+        .group-hover\:from-primary\/30.group:hover {
+            --tw-gradient-from: rgba(255, 140, 66, 0.3);
+            --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(255, 140, 66, 0));
+        }
+        
+        .group-hover\:to-primary\/20.group:hover {
+            --tw-gradient-to: rgba(255, 140, 66, 0.2);
+        }
+        
+        .group-hover\:from-secondary\/30.group:hover {
+            --tw-gradient-from: rgba(255, 255, 255, 0.3);
+            --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(255, 255, 255, 0));
+        }
+        
+        .group-hover\:to-secondary\/20.group:hover {
+            --tw-gradient-to: rgba(255, 255, 255, 0.2);
+        }
+        
+        .text-accent {
+            color: #ff6b35;
+        }
+        
+        .text-primary {
+            color: #ff8c42;
+        }
+        
+        .text-secondary {
+            color: #ffffff;
+        }
+        
+        .text-semibold {
+            font-weight: 600;
+        }
+        
+        /* Context menu */
+        .ml-auto {
+            margin-left: auto;
+        }
+        
+        .opacity-0 {
+            opacity: 0;
+        }
+        
+        .group-hover\:opacity-100.group:hover {
+            opacity: 1;
+        }
+        
+        .transition-opacity {
+            transition-property: opacity;
+            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+            transition-duration: 150ms;
+        }
+        
+        /* Children container */
+        .ml-8 {
+            margin-left: 32px;
+        }
+        
+        .mt-2 {
+            margin-top: 8px;
+        }
+        
+        .animate-slide-up {
+            animation: slideUp 0.3s ease-out;
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Child items */
+        .p-2 {
+            padding: 8px;
+        }
+        
+        .hover\:from-muted\/50:hover {
+            --tw-gradient-from: rgba(255, 255, 255, 0.05);
+            --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(255, 255, 255, 0));
+        }
+        
+        .hover\:to-muted\/20:hover {
+            --tw-gradient-to: rgba(255, 255, 255, 0.02);
+        }
+        
+        .duration-200 {
+            transition-duration: 200ms;
+        }
+        
+        .h-3 {
+            height: 12px;
+        }
+        
+        .w-3 {
+            width: 12px;
+        }
+        
+        /* Input styling */
+        input[type="text"] {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            font-family: inherit;
+            font-size: 14px;
+            outline: none;
+        }
+        
+        input[type="text"]::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        input[type="text"]:focus {
+            border-color: #ff6b35;
+            box-shadow: 0 0 0 2px rgba(255, 107, 53, 0.2);
+        }
+        
+        /* SVG styling */
+        svg {
+            fill: currentColor;
+            stroke: currentColor;
+        }
+        
+        /* Prevent zooming */
+        input, button, select, textarea {
+            -webkit-text-size-adjust: 100%;
+            -ms-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div id="root">
+        <div class="border rounded-lg overflow-hidden bg-gradient-to-br from-card to-card/80 shadow-lg shadow-black/5 h-full border-r border-border/50 panel-shadow">
+            <!-- Header -->
+            <div class="h-10 bg-gradient-to-r from-muted/50 to-muted/30 border-b border-border flex items-center px-3">
+                <div class="mr-2">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="h-4 w-4">
+                        <path d="M12 2l8 4v12l-8 4-8-4V6l8-4z" stroke="currentColor" stroke-width="2" fill="none"></path>
+                        <path d="M12 6v12M4 6l8 6 8-6" stroke="currentColor" stroke-width="2"></path>
+                    </svg>
+                </div>
+                <span class="text-sm font-medium text-foreground">Scene Hierarchy</span>
+            </div>
+            
+            <!-- Content -->
+            <div class="flex-1 overflow-hidden">
+                <div class="p-4 overflow-auto h-full">
+                    <!-- Search -->
+                    <div class="mb-4">
+                        <div class="relative">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground">
+                                <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2" fill="none"></circle>
+                                <path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="2"></path>
+                            </svg>
+                            <div class="space-y-1">
+                                <input class="flex h-9 w-full rounded-md border border-border px-3 py-1 text-sm text-foreground placeholder:text-muted-foreground transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-0 focus-visible:border-accent focus-visible:shadow-md focus-visible:shadow-accent/20 disabled:cursor-not-allowed disabled:opacity-50 bg-gradient-to-r from-input to-input/90 pl-10 glass-effect" placeholder="Search objects..." value="">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Objects -->
+                    <div class="space-y-2">
+                        <!-- Main Camera -->
+                        <div class="flex items-center gap-3 p-3 rounded-xl hover:bg-gradient-to-r hover:from-accent/15 hover:to-accent/5 cursor-pointer transition-all duration-300 group border border-transparent hover:border-accent/20 panel-shadow hover:panel-shadow-hover">
+                            <div class="w-8 h-8 bg-gradient-to-br from-accent/20 to-accent/10 rounded-lg flex items-center justify-center group-hover:from-accent/30 group-hover:to-accent/20 transition-all duration-300 panel-shadow">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="h-4 w-4 text-accent">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor" stroke-width="2" fill="none"></path>
+                                    <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2" fill="none"></circle>
+                                </svg>
+                            </div>
+                            <span class="text-sm font-semibold">Main Camera</span>
+                            <div class="ml-auto opacity-0 group-hover:opacity-100 transition-opacity">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="h-4 w-4 text-muted-foreground">
+                                    <circle cx="12" cy="12" r="1" fill="currentColor"></circle>
+                                    <circle cx="19" cy="12" r="1" fill="currentColor"></circle>
+                                    <circle cx="5" cy="12" r="1" fill="currentColor"></circle>
+                                </svg>
+                            </div>
+                        </div>
+                        
+                        <!-- Player -->
+                        <div class="flex items-center gap-3 p-3 rounded-xl hover:bg-gradient-to-r hover:from-primary/15 hover:to-primary/5 cursor-pointer transition-all duration-300 group border border-transparent hover:border-primary/20 panel-shadow hover:panel-shadow-hover bg-gradient-to-r from-primary/20 to-primary/10 border-primary/30">
+                            <div class="w-8 h-8 bg-gradient-to-br from-primary/20 to-primary/10 rounded-lg flex items-center justify-center group-hover:from-primary/30 group-hover:to-primary/20 transition-all duration-300 panel-shadow">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="h-4 w-4 text-primary">
+                                    <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" fill="currentColor"></path>
+                                </svg>
+                            </div>
+                            <span class="text-sm font-semibold">Player</span>
+                            <div class="ml-auto opacity-0 group-hover:opacity-100 transition-opacity">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="h-4 w-4 text-muted-foreground">
+                                    <circle cx="12" cy="12" r="1" fill="currentColor"></circle>
+                                    <circle cx="19" cy="12" r="1" fill="currentColor"></circle>
+                                    <circle cx="5" cy="12" r="1" fill="currentColor"></circle>
+                                </svg>
+                            </div>
+                        </div>
+                        
+                        <!-- Environment -->
+                        <div>
+                            <div class="flex items-center gap-3 p-3 rounded-xl hover:bg-gradient-to-r hover:from-secondary/15 hover:to-secondary/5 cursor-pointer transition-all duration-300 group border border-transparent hover:border-secondary/20 shadow-sm hover:shadow-md">
+                                <div class="w-8 h-8 bg-gradient-to-br from-secondary/20 to-secondary/10 rounded-lg flex items-center justify-center group-hover:from-secondary/30 group-hover:to-secondary/20 transition-all duration-300">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="h-4 w-4 text-secondary">
+                                        <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" fill="none"></path>
+                                    </svg>
+                                </div>
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="h-4 w-4 text-secondary">
+                                    <path d="M12 2l8 4v12l-8 4-8-4V6l8-4z" stroke="currentColor" stroke-width="2" fill="none"></path>
+                                    <path d="M12 6v12M4 6l8 6 8-6" stroke="currentColor" stroke-width="2"></path>
+                                </svg>
+                                <span class="text-sm font-semibold">Environment</span>
+                            </div>
+                            <div class="ml-8 mt-2 space-y-2 animate-slide-up">
+                                <div class="flex items-center gap-3 p-2 rounded-lg hover:bg-gradient-to-r hover:from-muted/50 hover:to-muted/20 cursor-pointer transition-all duration-200">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="h-3 w-3 text-muted-foreground">
+                                        <path d="M12 2l8 4v12l-8 4-8-4V6l8-4z" stroke="currentColor" stroke-width="2" fill="none"></path>
+                                        <path d="M12 6v12M4 6l8 6 8-6" stroke="currentColor" stroke-width="2"></path>
+                                    </svg>
+                                    <span class="text-sm">Ground</span>
+                                </div>
+                                <div class="flex items-center gap-3 p-2 rounded-lg hover:bg-gradient-to-r hover:from-muted/50 hover:to-muted/20 cursor-pointer transition-all duration-200">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="h-3 w-3 text-muted-foreground">
+                                        <path d="M12 2l8 4v12l-8 4-8-4V6l8-4z" stroke="currentColor" stroke-width="2" fill="none"></path>
+                                        <path d="M12 6v12M4 6l8 6 8-6" stroke="currentColor" stroke-width="2"></path>
+                                    </svg>
+                                    <span class="text-sm">Buildings</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Disable zoom through JavaScript
+        (function() {
+            'use strict';
+            
+            // Prevent keyboard shortcuts
+            document.addEventListener('keydown', function(e) {
+                if ((e.ctrlKey || e.metaKey) && 
+                    (e.key === '+' || e.key === '-' || e.key === '=' || e.key === '0')) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log('DEBUG: Zoom shortcut prevented');
+                    return false;
+                }
+            }, true);
+            
+            // Prevent wheel zoom
+            document.addEventListener('wheel', function(e) {
+                if (e.ctrlKey || e.metaKey) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log('DEBUG: Ctrl+wheel zoom prevented');
+                    return false;
+                }
+            }, { passive: false });
+            
+            // Prevent touch zoom
+            document.addEventListener('gesturestart', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('DEBUG: Touch zoom prevented');
+                return false;
+            }, { passive: false });
+            
+            // Prevent double-tap zoom
+            document.addEventListener('touchend', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('DEBUG: Double-tap zoom prevented');
+                return false;
+            }, false);
+            
+            // Set viewport meta tag
+            const viewport = document.querySelector('meta[name="viewport"]');
+            if (viewport) {
+                viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
+            } else {
+                const meta = document.createElement('meta');
+                meta.name = 'viewport';
+                meta.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no';
+                document.head.appendChild(meta);
+            }
+            
+            console.log('DEBUG: Zoom prevention JavaScript injected successfully');
+        })();
+        
+        // Python bridge for scene hierarchy
+        window.pythonBridge = {
+            // Object selection
+            selectObject: function(objectName) {
+                console.log('DEBUG: Object selected:', objectName);
+                // This will be connected to PyQt signals
+            },
+            
+            // Search query
+            setSearchQuery: function(query) {
+                console.log('DEBUG: Search query:', query);
+                // This will be connected to PyQt signals
+            },
+            
+            // Node expansion
+            toggleNode: function(nodeId) {
+                console.log('DEBUG: Toggle node:', nodeId);
+                // This will be connected to PyQt signals
+            }
+        };
+        
+        console.log('DEBUG: Python bridge injected successfully');
+    </script>
+</body>
+</html>

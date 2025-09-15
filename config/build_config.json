@@ -1,0 +1,53 @@
+{
+    "build_options": {
+        "build_type": "Release",
+        "enable_tests": true,
+        "enable_editor": true,
+        "enable_vulkan": true,
+        "enable_opengl": true,
+        "enable_python": true
+    },
+    "dependencies": {
+        "glfw": {
+            "use_system": true,
+            "fallback_to_stub": true,
+            "version": "3.3.8"
+        },
+        "imgui": {
+            "use_system": false,
+            "version": "1.89.9"
+        },
+        "vulkan": {
+            "required": false,
+            "sdk_paths": [
+                "C:/VulkanSDK/1.4.321.1",
+                "C:/VulkanSDK/1.4.0.0",
+                "C:/VulkanSDK/1.3.0.0",
+                "C:/VulkanSDK/1.2.0.0"
+            ]
+        },
+        "python": {
+            "required": false,
+            "version": "3.8"
+        }
+    },
+    "compiler": {
+        "preferred": "MinGW-w64",
+        "fallbacks": ["MSVC", "Ninja"],
+        "cxx_standard": "17",
+        "windows_flags": [
+            "/W4",
+            "/D_CRT_SECURE_NO_WARNINGS"
+        ]
+    },
+    "paths": {
+        "build_dir": "build",
+        "install_dir": "install",
+        "output_dir": "bin"
+    },
+    "timeouts": {
+        "cmake_configure": 300,
+        "cmake_build": 900,
+        "command_check": 20
+    }
+}

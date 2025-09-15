@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Simple Header - Working Version</title>
+    
+    <style>
+        /* Force dark mode */
+        html.dark, body {
+            background-color: #0c0c0c !important;
+            color: #f8f8f8 !important;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            overflow: hidden; /* Prevent scrollbars */
+            /* Prevent zooming */
+            -webkit-text-size-adjust: 100%;
+            -ms-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+            /* Prevent user selection and zoom */
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            /* Prevent touch zoom */
+            touch-action: manipulation;
+        }
+
+        /* Header container */
+        .header {
+            height: 64px;
+            background: rgba(20, 20, 20, 0.9);
+            border-bottom: 1px solid rgba(42, 42, 42, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            box-shadow: 0 1px 3px rgba(248, 248, 248, 0.1);
+            overflow: hidden; /* Prevent scrollbars */
+            box-sizing: border-box; /* Include padding in height calculation */
+            /* Prevent zooming */
+            -webkit-text-size-adjust: 100%;
+            -ms-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+        }
+        
+        /* Prevent zoom on all interactive elements */
+        button, input, select, textarea {
+            -webkit-text-size-adjust: 100%;
+            -ms-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+        }
+
+        /* Left section */
+        .left-section {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        /* Button groups */
+        .button-group {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px;
+            background: linear-gradient(135deg, #141414 0%, rgba(20, 20, 20, 0.95) 25%, rgba(31, 31, 31, 0.3) 100%);
+            border-radius: 8px;
+            border: 1px solid rgba(42, 42, 42, 0.5);
+        }
+
+        /* Toolbar buttons */
+        .toolbar-btn {
+            width: 32px;
+            height: 32px;
+            border: none;
+            border-radius: 6px;
+            background: transparent;
+            color: #f8f8f8;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .toolbar-btn:hover {
+            background: rgba(255, 140, 66, 0.2);
+        }
+
+        .toolbar-btn.active {
+            background: linear-gradient(to bottom, #ff6b35, rgba(255, 107, 53, 0.9));
+            color: white;
+        }
+
+        /* Separator */
+        .separator {
+            width: 1px;
+            height: 32px;
+            background: linear-gradient(to bottom, transparent, #2a2a2a, transparent);
+        }
+
+        /* Logo section */
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .logo img {
+            width: 32px;
+            height: 32px;
+            filter: brightness(1.1) contrast(1.1);
+        }
+
+        .title-section {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .title {
+            font-size: 18px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #ff6b35, #ff8c42);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .badge {
+            font-size: 12px;
+            padding: 2px 8px;
+            background: linear-gradient(135deg, #141414, #1f1f1f);
+            border: 1px solid rgba(255, 107, 53, 0.5);
+            border-radius: 9999px;
+            color: #ff6b35;
+            font-weight: 500;
+        }
+
+        .version {
+            font-size: 12px;
+            color: #a3a3a3;
+        }
+
+        /* Breadcrumb */
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: #a3a3a3;
+        }
+
+        .breadcrumb-item {
+            color: #a3a3a3;
+        }
+
+        .breadcrumb-active {
+            color: #f8f8f8;
+            font-weight: 500;
+        }
+
+        .chevron {
+            font-size: 10px;
+            color: #a3a3a3;
+        }
+
+        /* Right section */
+        .right-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        /* Performance metrics */
+        .performance {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 4px 12px;
+            background: rgba(20, 20, 20, 0.8);
+            border-radius: 8px;
+            border: 1px solid rgba(42, 42, 42, 0.3);
+        }
+
+        .metric {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .metric-icon {
+            width: 12px;
+            height: 12px;
+            border-radius: 2px;
+        }
+
+        .metric-icon.fps {
+            background: #4ade80;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .metric-icon.memory {
+            background: #60a5fa;
+        }
+
+        .metric-icon.online {
+            background: #4ade80;
+            border-radius: 50%;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .metric-text {
+            font-size: 12px;
+            font-family: monospace;
+        }
+
+        .metric-text.fps {
+            color: #4ade80;
+        }
+
+        .metric-text.memory {
+            color: #60a5fa;
+        }
+
+        .metric-text.online {
+            color: #4ade80;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            background: transparent;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .theme-toggle:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Settings button */
+        .settings-btn {
+            padding: 6px 12px;
+            font-size: 14px;
+            border: 1px solid #2a2a2a;
+            border-radius: 6px;
+            background: transparent;
+            color: #f8f8f8;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .settings-btn:hover {
+            background: rgba(255, 140, 66, 0.2);
+        }
+
+
+
+        /* Animations */
+        @keyframes shimmer {
+            0% { transform: translateX(-100%) skewX(-12deg); }
+            100% { transform: translateX(100%) skewX(-12deg); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <!-- Left Section -->
+        <div class="left-section">
+            <!-- Play Controls -->
+            <div class="button-group">
+                <button class="toolbar-btn active" id="play-btn" title="Play">
+                    <img src="play.svg" alt="Play" width="16" height="16">
+                </button>
+                <button class="toolbar-btn" title="Stop">
+                    <img src="stop.svg" alt="Stop" width="16" height="16">
+                </button>
+                <button class="toolbar-btn" title="Reset">
+                    <img src="reset.svg" alt="Reset" width="16" height="16">
+                </button>
+            </div>
+
+            <!-- Transform Tools -->
+            <div class="button-group">
+                <button class="toolbar-btn active" title="Move Tool">
+                    <img src="move.svg" alt="Move Tool" width="16" height="16">
+                </button>
+                <button class="toolbar-btn" title="Rotate Tool">
+                    <img src="rotate.svg" alt="Rotate Tool" width="16" height="16">
+                </button>
+                <button class="toolbar-btn" title="Scale Tool">
+                    <img src="scale.svg" alt="Scale Tool" width="16" height="16">
+                </button>
+            </div>
+
+            <div class="separator"></div>
+
+            <!-- Logo and Title -->
+            <div class="logo-section">
+                <div class="logo">
+                    <img src="nexlify_icon_simple.svg" alt="Nexlify" width="32" height="32" style="z-index: 10; position: relative;">
+                </div>
+                <div class="title-section">
+                    <span class="title">Nexlify</span>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <span class="badge">Pro</span>
+                        <span class="version">v2.1.0</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Breadcrumb -->
+            <div class="breadcrumb">
+                <span class="breadcrumb-item">Project</span>
+                <span class="chevron">></span>
+                <span class="breadcrumb-item">Scenes</span>
+                <span class="chevron">></span>
+                <span class="breadcrumb-active">MainScene</span>
+            </div>
+        </div>
+
+        <!-- Right Section -->
+        <div class="right-section">
+            <!-- Performance Metrics -->
+            <div class="performance">
+                <div class="metric">
+                    <div class="metric-icon fps"></div>
+                    <span class="metric-text fps" id="fps-display">60 FPS</span>
+                </div>
+                <div class="metric">
+                    <div class="metric-icon memory"></div>
+                    <span class="metric-text memory" id="memory-display">245MB</span>
+                </div>
+                <div class="metric">
+                    <div class="metric-icon online"></div>
+                    <span class="metric-text online">Online</span>
+                </div>
+            </div>
+
+            <!-- Theme Toggle -->
+            <button class="theme-toggle" id="theme-toggle">
+                <img src="theme.svg" alt="Theme Toggle" width="16" height="16">
+            </button>
+
+            <!-- Settings -->
+            <button class="settings-btn">
+                <img src="settings.svg" alt="Settings" width="16" height="16">
+                Settings
+            </button>
+        </div>
+    </header>
+
+    <script>
+        console.log('Simple header loaded successfully!');
+        
+        // Prevent zooming through JavaScript
+        (function() {
+            'use strict';
+            
+            // Prevent zoom shortcuts
+            document.addEventListener('keydown', function(e) {
+                if (e.ctrlKey && (e.key === '+' || e.key === '-' || e.key === '0' || e.key === '=')) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log('Zoom shortcut prevented:', e.key);
+                    return false;
+                }
+            }, true);
+            
+            // Prevent wheel zoom
+            document.addEventListener('wheel', function(e) {
+                if (e.ctrlKey) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log('Ctrl+wheel zoom prevented');
+                    return false;
+                }
+            }, { passive: false });
+            
+            // Prevent touch zoom
+            document.addEventListener('gesturestart', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('Touch zoom gesture prevented');
+                return false;
+            }, { passive: false });
+            
+            // Prevent double-tap zoom
+            let lastTouchEnd = 0;
+            document.addEventListener('touchend', function(e) {
+                const now = (new Date()).getTime();
+                if (now - lastTouchEnd <= 300) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log('Double-tap zoom prevented');
+                    return false;
+                }
+                lastTouchEnd = now;
+            }, false);
+            
+            console.log('Zoom prevention JavaScript loaded successfully');
+        })();
+        
+        // Simulate performance updates
+        setInterval(() => {
+            const fps = Math.floor(Math.random() * 10) + 55;
+            const memory = Math.floor(Math.random() * 10) + 240;
+            
+            document.getElementById('fps-display').textContent = `${fps} FPS`;
+            document.getElementById('memory-display').textContent = `${memory}MB`;
+        }, 1000);
+
+        // Play button toggle
+        document.getElementById('play-btn').addEventListener('click', function() {
+            this.classList.toggle('active');
+            if (this.classList.contains('active')) {
+                this.innerHTML = '<img src="pause.svg" alt="Pause" width="16" height="16">';
+                this.title = 'Pause';
+                console.log('PyQt6 Event: playStateChanged', true);
+            } else {
+                this.innerHTML = '<img src="play.svg" alt="Play" width="16" height="16">';
+                this.title = 'Play';
+                console.log('PyQt6 Event: playStateChanged', false);
+            }
+        });
+
+        // Theme toggle
+        document.getElementById('theme-toggle').addEventListener('click', function() {
+            console.log('PyQt6 Event: themeToggled');
+            // Toggle between moon and sun theme icons
+            const img = this.querySelector('img');
+            if (img.src.includes('theme.svg')) {
+                img.src = 'theme-sun.svg';
+            } else {
+                img.src = 'theme.svg';
+            }
+        });
+
+        // Transform tool selection
+        document.querySelectorAll('.button-group .toolbar-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                // Remove active from all buttons in the same group
+                this.parentElement.querySelectorAll('.toolbar-btn').forEach(b => b.classList.remove('active'));
+                // Add active to clicked button
+                this.classList.add('active');
+                
+                const toolName = this.title;
+                console.log('PyQt6 Event: transformToolChanged', toolName);
+            });
+        });
+
+        // Notify PyQt6 that header is ready
+        console.log('Header component ready for PyQt6 communication');
+        
+        // Expose functions for PyQt6 to call
+        window.setPlayState = function(isPlaying) {
+            const playBtn = document.getElementById('play-btn');
+            if (isPlaying) {
+                playBtn.classList.add('active');
+                playBtn.innerHTML = '<img src="pause.svg" alt="Pause" width="16" height="16">';
+                playBtn.title = 'Pause';
+            } else {
+                playBtn.classList.remove('active');
+                playBtn.innerHTML = '<img src="play.svg" alt="Play" width="16" height="16">';
+                playBtn.title = 'Play';
+            }
+        };
+
+        window.setPerformanceData = function(data) {
+            if (data.fps) {
+                document.getElementById('fps-display').textContent = `${data.fps} FPS`;
+            }
+            if (data.memoryUsage) {
+                document.getElementById('memory-display').textContent = `${data.memoryUsage}MB`;
+            }
+        };
+
+        window.setActiveTab = function(tabName) {
+            const activeTab = document.querySelector('.breadcrumb-active');
+            if (activeTab) {
+                activeTab.textContent = tabName;
+            }
+        };
+    </script>
+</body>
+</html>

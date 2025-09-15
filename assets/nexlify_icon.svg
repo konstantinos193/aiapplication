@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="256" height="256" viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Gradients -->
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a1a2e;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#16213e;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0f3460;stop-opacity:1" />
+    </linearGradient>
+    
+    <linearGradient id="cubeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4facfe;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#00f2fe;stop-opacity:1" />
+    </linearGradient>
+    
+    <linearGradient id="aiGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ff6b6b;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#ee5a24;stop-opacity:1" />
+    </linearGradient>
+    
+    <linearGradient id="glowGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4facfe;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#4facfe;stop-opacity:0" />
+    </linearGradient>
+    
+    <!-- Filters -->
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge> 
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    
+    <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="2" dy="4" stdDeviation="3" flood-color="#000000" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="256" height="256" rx="32" ry="32" fill="url(#bgGradient)"/>
+  
+  <!-- Outer glow ring -->
+  <circle cx="128" cy="128" r="120" fill="none" stroke="url(#glowGradient)" stroke-width="2" opacity="0.6"/>
+  
+  <!-- Main 3D Cube (representing the engine) -->
+  <g filter="url(#shadow)">
+    <!-- Back face -->
+    <polygon points="88,88 168,88 168,168 88,168" 
+             fill="#2a4a6b" opacity="0.8" 
+             transform="translate(8,-8)"/>
+    
+    <!-- Right face -->
+    <polygon points="168,88 176,80 176,160 168,168" 
+             fill="#1e3a5b" opacity="0.9"/>
+    
+    <!-- Top face -->
+    <polygon points="88,88 168,88 176,80 96,80" 
+             fill="#3a5a7b" opacity="0.7"/>
+    
+    <!-- Front face -->
+    <polygon points="88,88 168,88 168,168 88,168" 
+             fill="url(#cubeGradient)"/>
+    
+    <!-- Cube edges -->
+    <line x1="88" y1="88" x2="96" y2="80" stroke="#ffffff" stroke-width="2" opacity="0.8"/>
+    <line x1="168" y1="88" x2="176" y2="80" stroke="#ffffff" stroke-width="2" opacity="0.8"/>
+    <line x1="168" y1="168" x2="176" y2="160" stroke="#ffffff" stroke-width="2" opacity="0.8"/>
+    <line x1="88" y1="168" x2="96" y2="160" stroke="#ffffff" stroke-width="2" opacity="0.8"/>
+  </g>
+  
+  <!-- AI Brain Circuit Pattern (representing AI capabilities) -->
+  <g opacity="0.9">
+    <!-- Central neural network -->
+    <circle cx="128" cy="128" r="40" fill="none" stroke="url(#aiGradient)" stroke-width="2" opacity="0.8"/>
+    <circle cx="128" cy="128" r="25" fill="none" stroke="url(#aiGradient)" stroke-width="1.5" opacity="0.6"/>
+    
+    <!-- Neural connections -->
+    <line x1="108" y1="108" x2="118" y2="118" stroke="url(#aiGradient)" stroke-width="1.5" opacity="0.7"/>
+    <line x1="148" y1="108" x2="138" y2="118" stroke="url(#aiGradient)" stroke-width="1.5" opacity="0.7"/>
+    <line x1="108" y1="148" x2="118" y2="138" stroke="url(#aiGradient)" stroke-width="1.5" opacity="0.7"/>
+    <line x1="148" y1="148" x2="138" y2="138" stroke="url(#aiGradient)" stroke-width="1.5" opacity="0.7"/>
+    
+    <!-- Data nodes -->
+    <circle cx="108" cy="108" r="3" fill="url(#aiGradient)"/>
+    <circle cx="148" cy="108" r="3" fill="url(#aiGradient)"/>
+    <circle cx="108" cy="148" r="3" fill="url(#aiGradient)"/>
+    <circle cx="148" cy="148" r="3" fill="url(#aiGradient)"/>
+    <circle cx="128" cy="128" r="4" fill="url(#aiGradient)"/>
+  </g>
+  
+  <!-- Floating particles (representing dynamic content) -->
+  <g opacity="0.8">
+    <circle cx="60" cy="60" r="2" fill="#4facfe">
+      <animate attributeName="opacity" values="0.3;1;0.3" dur="3s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="196" cy="60" r="2" fill="#00f2fe">
+      <animate attributeName="opacity" values="0.3;1;0.3" dur="2.5s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="60" cy="196" r="2" fill="#ff6b6b">
+      <animate attributeName="opacity" values="0.3;1;0.3" dur="3.5s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="196" cy="196" r="2" fill="#ee5a24">
+      <animate attributeName="opacity" values="0.3;1;0.3" dur="2s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+  
+  <!-- Engine core glow -->
+  <circle cx="128" cy="128" r="15" fill="none" stroke="#4facfe" stroke-width="1" opacity="0.6">
+    <animate attributeName="r" values="15;18;15" dur="2s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0.6;1;0.6" dur="2s" repeatCount="indefinite"/>
+  </circle>
+  
+  <!-- Text label -->
+  <text x="128" y="220" font-family="Arial, sans-serif" font-size="16" font-weight="bold" 
+        text-anchor="middle" fill="#ffffff" opacity="0.9">
+    NEXLIFY ENGINE
+  </text>
+  
+  <!-- Subtitle -->
+  <text x="128" y="240" font-family="Arial, sans-serif" font-size="10" 
+        text-anchor="middle" fill="#4facfe" opacity="0.7">
+    AI-POWERED GAME ENGINE
+  </text>
+</svg>

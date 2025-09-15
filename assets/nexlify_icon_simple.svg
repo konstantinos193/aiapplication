@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="128" height="128" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Advanced Gradients -->
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0a0e1a;stop-opacity:1" />
+      <stop offset="25%" style="stop-color:#1a1f2e;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#16213e;stop-opacity:1" />
+      <stop offset="75%" style="stop-color:#0f1419;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0a0e1a;stop-opacity:1" />
+    </linearGradient>
+    
+    <radialGradient id="cubeGradient" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#4facfe;stop-opacity:1" />
+      <stop offset="40%" style="stop-color:#00f2fe;stop-opacity:1" />
+      <stop offset="70%" style="stop-color:#0099cc;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0066cc;stop-opacity:1" />
+    </radialGradient>
+    
+    <linearGradient id="aiGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ff6b6b;stop-opacity:1" />
+      <stop offset="30%" style="stop-color:#ff8e53;stop-opacity:1" />
+      <stop offset="60%" style="stop-color:#ff6b6b;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#ee5a24;stop-opacity:1" />
+    </linearGradient>
+    
+    <radialGradient id="glowGradient" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#4facfe;stop-opacity:0.8" />
+      <stop offset="70%" style="stop-color:#4facfe;stop-opacity:0.3" />
+      <stop offset="100%" style="stop-color:#4facfe;stop-opacity:0" />
+    </radialGradient>
+    
+    <linearGradient id="metalGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:0.9" />
+      <stop offset="50%" style="stop-color:#e6e6e6;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#cccccc;stop-opacity:0.7" />
+    </linearGradient>
+    
+    <linearGradient id="shadowGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#000000;stop-opacity:0.4" />
+      <stop offset="100%" style="stop-color:#000000;stop-opacity:0.1" />
+    </linearGradient>
+    
+    <!-- Advanced Filters -->
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge> 
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    
+    <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="2" dy="4" stdDeviation="4" flood-color="#000000" flood-opacity="0.6"/>
+    </filter>
+    
+    <filter id="innerGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="2" result="innerBlur"/>
+      <feComposite in="innerBlur" in2="SourceGraphic" operator="arithmetic" k2="1" k3="0"/>
+    </filter>
+    
+    <filter id="metallic" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="1" result="blur"/>
+      <feSpecularLighting in="blur" surfaceScale="5" specularConstant="1.5" specularExponent="20">
+        <fePointLight x="50" y="75" z="200"/>
+      </feSpecularLighting>
+      <feComposite in="specularLighting" in2="SourceGraphic" operator="in"/>
+    </filter>
+  </defs>
+  
+  <!-- Background with depth -->
+  <rect width="128" height="128" rx="24" ry="24" fill="url(#bgGradient)"/>
+  
+  <!-- Atmospheric depth rings -->
+  <circle cx="64" cy="64" r="60" fill="none" stroke="url(#glowGradient)" stroke-width="0.5" opacity="0.3"/>
+  <circle cx="64" cy="64" r="45" fill="none" stroke="url(#glowGradient)" stroke-width="0.3" opacity="0.2"/>
+  <circle cx="64" cy="64" r="30" fill="none" stroke="url(#glowGradient)" stroke-width="0.2" opacity="0.1"/>
+  
+  <!-- Main 3D Cube with advanced effects -->
+  <g filter="url(#shadow)">
+    <!-- Shadow layer -->
+    <polygon points="36,36 100,36 100,100 36,100" 
+             fill="url(#shadowGradient)" 
+             transform="translate(6,-6)"/>
+    
+    <!-- Back face with depth -->
+    <polygon points="32,32 96,32 96,96 32,96" 
+             fill="#1e3a5b" opacity="0.9" 
+             transform="translate(4,-4)"/>
+    
+    <!-- Right face with metallic effect -->
+    <polygon points="96,32 100,28 100,92 96,96" 
+             fill="#16213e" opacity="0.95"/>
+    
+    <!-- Top face with highlight -->
+    <polygon points="32,32 96,32 100,28 36,28" 
+             fill="#2a4a6b" opacity="0.8"/>
+    
+    <!-- Front face with advanced gradient -->
+    <polygon points="32,32 96,32 96,96 32,96" 
+             fill="url(#cubeGradient)"/>
+    
+    <!-- Cube edges with metallic finish -->
+    <line x1="32" y1="32" x2="36" y2="28" stroke="url(#metalGradient)" stroke-width="2" opacity="0.9"/>
+    <line x1="96" y1="32" x2="100" y2="28" stroke="url(#metalGradient)" stroke-width="2" opacity="0.9"/>
+    <line x1="96" y1="96" x2="100" y2="92" stroke="url(#metalGradient)" stroke-width="2" opacity="0.9"/>
+    <line x1="32" y1="96" x2="36" y2="92" stroke="url(#metalGradient)" stroke-width="2" opacity="0.9"/>
+    
+    <!-- Cube face highlights -->
+    <polygon points="36,36 92,36 92,92 36,92" 
+             fill="none" stroke="url(#metalGradient)" stroke-width="1" opacity="0.6"/>
+  </g>
+  
+  <!-- AI Neural Network with advanced effects -->
+  <g filter="url(#glow)">
+    <!-- Central neural hub -->
+    <circle cx="64" cy="64" r="22" fill="url(#aiGradient)"/>
+    <circle cx="64" cy="64" r="18" fill="url(#aiGradient)" opacity="0.8"/>
+    
+    <!-- Neural connection lines with glow -->
+    <line x1="42" cy="42" x2="56" y2="56" stroke="url(#aiGradient)" stroke-width="2.5" opacity="0.9"/>
+    <line x1="86" cy="42" x2="72" y2="56" stroke="url(#aiGradient)" stroke-width="2.5" opacity="0.9"/>
+    <line x1="42" cy="86" x2="56" y2="72" stroke="url(#aiGradient)" stroke-width="2.5" opacity="0.9"/>
+    <line x1="86" cy="86" x2="72" y2="72" stroke="url(#aiGradient)" stroke-width="2.5" opacity="0.9"/>
+    
+    <!-- Diagonal connections for complexity -->
+    <line x1="42" cy="42" x2="86" y2="86" stroke="url(#aiGradient)" stroke-width="1" opacity="0.4"/>
+    <line x1="86" cy="42" x2="42" y2="86" stroke="url(#aiGradient)" stroke-width="1" opacity="0.4"/>
+    
+    <!-- Corner neural nodes with pulsing effect -->
+    <circle cx="42" cy="42" r="4" fill="url(#aiGradient)">
+      <animate attributeName="r" values="4;5;4" dur="2s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="86" cy="42" r="4" fill="url(#aiGradient)">
+      <animate attributeName="r" values="4;5;4" dur="2.5s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="42" cy="86" r="4" fill="url(#aiGradient)">
+      <animate attributeName="r" values="4;5;4" dur="1.8s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="86" cy="86" r="4" fill="url(#aiGradient)">
+      <animate attributeName="r" values="4;5;4" dur="2.2s" repeatCount="indefinite"/>
+    </circle>
+    
+    <!-- Secondary neural connections -->
+    <circle cx="56" cy="42" r="2" fill="url(#aiGradient)" opacity="0.7"/>
+    <circle cx="72" cy="42" r="2" fill="url(#aiGradient)" opacity="0.7"/>
+    <circle cx="42" cy="56" r="2" fill="url(#aiGradient)" opacity="0.7"/>
+    <circle cx="86" cy="56" r="2" fill="url(#aiGradient)" opacity="0.7"/>
+    <circle cx="42" cy="72" r="2" fill="url(#aiGradient)" opacity="0.7"/>
+    <circle cx="86" cy="72" r="2" fill="url(#aiGradient)" opacity="0.7"/>
+    <circle cx="56" cy="86" r="2" fill="url(#aiGradient)" opacity="0.7"/>
+    <circle cx="72" cy="86" r="2" fill="url(#aiGradient)" opacity="0.7"/>
+  </g>
+  
+  <!-- Engine core with metallic finish -->
+  <circle cx="64" cy="64" r="10" fill="url(#metalGradient)" filter="url(#metallic)"/>
+  <circle cx="64" cy="64" r="8" fill="url(#metalGradient)" opacity="0.9"/>
+  
+  <!-- Advanced glow effects -->
+  <circle cx="64" cy="64" r="16" fill="none" stroke="url(#glowGradient)" stroke-width="1.5" opacity="0.8">
+    <animate attributeName="r" values="16;20;16" dur="3s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0.8;1;0.8" dur="3s" repeatCount="indefinite"/>
+  </circle>
+  
+  <circle cx="64" cy="64" r="12" fill="none" stroke="#4facfe" stroke-width="1" opacity="0.6">
+    <animate attributeName="r" values="12;15;12" dur="2s" repeatCount="indefinite"/>
+  </circle>
+  
+  <!-- Floating data particles -->
+  <g opacity="0.8">
+    <circle cx="20" cy="20" r="1.5" fill="#4facfe">
+      <animate attributeName="opacity" values="0.3;1;0.3" dur="4s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="108" cy="20" r="1.5" fill="#00f2fe">
+      <animate attributeName="opacity" values="0.3;1;0.3" dur="3.5s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="20" cy="108" r="1.5" fill="#ff6b6b">
+      <animate attributeName="opacity" values="0.3;1;0.3" dur="4.5s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="108" cy="108" r="1.5" fill="#ee5a24">
+      <animate attributeName="opacity" values="0.3;1;0.3" dur="3s" repeatCount="indefinite"/>
+    </circle>
+    
+    <!-- Additional particles -->
+    <circle cx="64" cy="20" r="1" fill="#4facfe" opacity="0.6">
+      <animate attributeName="opacity" values="0.6;1;0.6" dur="5s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="64" cy="108" r="1" fill="#ff6b6b" opacity="0.6">
+      <animate attributeName="opacity" values="0.6;1;0.6" dur="4.8s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="20" cy="64" r="1" fill="#00f2fe" opacity="0.6">
+      <animate attributeName="opacity" values="0.6;1;0.6" dur="4.2s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="108" cy="64" r="1" fill="#ee5a24" opacity="0.6">
+      <animate attributeName="opacity" values="0.6;1;0.6" dur="4.6s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+  
+  <!-- Subtle border glow -->
+  <rect width="128" height="128" rx="24" ry="24" fill="none" stroke="url(#glowGradient)" stroke-width="1" opacity="0.3"/>
+</svg>

@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AI Assistant</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0a0a0a;
+            color: #ffffff;
+            overflow: hidden;
+            /* Prevent zooming */
+            -webkit-text-size-adjust: 100%;
+            -ms-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+            /* Prevent user selection and zoom */
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            /* Prevent touch zoom */
+            touch-action: manipulation;
+        }
+        
+        #root {
+            /* Prevent zooming */
+            -webkit-text-size-adjust: 100%;
+            -ms-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+            /* Fixed size to prevent scaling */
+            width: 100%;
+            height: 100vh;
+            min-height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Main container */
+        .relative {
+            position: relative;
+        }
+        
+        .border {
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .rounded-lg {
+            border-radius: 8px;
+        }
+        
+        .overflow-hidden {
+            overflow: hidden;
+        }
+        
+        .bg-gradient-to-br {
+            background: linear-gradient(to bottom right, var(--tw-gradient-stops));
+        }
+        
+        .from-card {
+            --tw-gradient-from: #1a1a1a;
+            --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(26, 26, 26, 0));
+        }
+        
+        .to-card\/80 {
+            --tw-gradient-to: rgba(26, 26, 26, 0.8);
+        }
+        
+        .shadow-lg {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        
+        .shadow-black\/5 {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        
+        .h-full {
+            height: 100%;
+        }
+        
+        .border-l {
+            border-left-width: 1px;
+        }
+        
+        .border-border\/50 {
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .panel-shadow {
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+        }
+        
+        /* Header */
+        .h-10 {
+            height: 40px;
+        }
+        
+        .bg-gradient-to-r {
+            background: linear-gradient(to right, var(--tw-gradient-stops));
+        }
+        
+        .from-muted\/50 {
+            --tw-gradient-from: rgba(255, 255, 255, 0.05);
+            --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(255, 255, 255, 0));
+        }
+        
+        .to-muted\/30 {
+            --tw-gradient-to: rgba(255, 255, 255, 0.03);
+        }
+        
+        .border-b {
+            border-bottom-width: 1px;
+        }
+        
+        .border-border {
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .flex {
+            display: flex;
+        }
+        
+        .items-center {
+            align-items: center;
+        }
+        
+        .px-3 {
+            padding-left: 12px;
+            padding-right: 12px;
+        }
+        
+        .mr-2 {
+            margin-right: 8px;
+        }
+        
+        .h-4 {
+            height: 16px;
+        }
+        
+        .w-4 {
+            width: 16px;
+        }
+        
+        .text-sm {
+            font-size: 14px;
+            line-height: 20px;
+        }
+        
+        .font-medium {
+            font-weight: 500;
+        }
+        
+        .text-foreground {
+            color: #ffffff;
+        }
+        
+        /* Content area */
+        .flex-1 {
+            flex: 1 1 0%;
+        }
+        
+        .p-4 {
+            padding: 16px;
+        }
+        
+        .flex-col {
+            flex-direction: column;
+        }
+        
+        .h-full {
+            height: 100%;
+        }
+        
+        /* Chat area */
+        .bg-gradient-to-br {
+            background: linear-gradient(to bottom right, var(--tw-gradient-stops));
+        }
+        
+        .from-background\/80 {
+            --tw-gradient-from: rgba(10, 10, 10, 0.8);
+            --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(10, 10, 10, 0));
+        }
+        
+        .via-background\/90 {
+            --tw-gradient-stops: var(--tw-gradient-from), rgba(10, 10, 10, 0.9), var(--tw-gradient-to, rgba(10, 10, 10, 0));
+        }
+        
+        .to-card\/50 {
+            --tw-gradient-to: rgba(26, 26, 26, 0.5);
+        }
+        
+        .rounded-xl {
+            border-radius: 12px;
+        }
+        
+        .mb-4 {
+            margin-bottom: 16px;
+        }
+        
+        .overflow-auto {
+            overflow: auto;
+        }
+        
+        .border-border\/30 {
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .shadow-inner {
+            box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06);
+        }
+        
+        /* Ensure proper height distribution */
+        .flex-1 {
+            flex: 1 1 0%;
+            min-height: 0;
+        }
+        
+        /* Force chat area to expand */
+        .chat-area {
+            flex: 1;
+            min-height: 0;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Ensure input area stays at bottom */
+        .input-area {
+            flex-shrink: 0;
+            margin-top: auto;
+        }
+        
+        /* Make chat area take remaining space */
+        .chat-container {
+            flex: 1;
+            min-height: 0;
+            overflow: hidden;
+        }
+        
+        /* Messages */
+        .space-y-4 > * + * {
+            margin-top: 16px;
+        }
+        
+        .bg-gradient-to-r {
+            background: linear-gradient(to right, var(--tw-gradient-stops));
+        }
+        
+        .from-primary\/15 {
+            --tw-gradient-from: rgba(255, 140, 66, 0.15);
+            --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(255, 140, 66, 0));
+        }
+        
+        .via-primary\/10 {
+            --tw-gradient-stops: var(--tw-gradient-from), rgba(255, 140, 66, 0.1), var(--tw-gradient-to, rgba(255, 140, 66, 0));
+        }
+        
+        .to-primary\/5 {
+            --tw-gradient-to: rgba(255, 140, 66, 0.05);
+        }
+        
+        .border-primary\/20 {
+            border-color: rgba(255, 140, 66, 0.2);
+        }
+        
+        .shadow-sm {
+            --tw-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
+        }
+        
+        .animate-slide-up {
+            animation: slideUp 0.3s ease-out;
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .leading-relaxed {
+            line-height: 1.625;
+        }
+        
+        /* User message */
+        .ml-8 {
+            margin-left: 32px;
+        }
+        
+        .from-muted {
+            --tw-gradient-from: rgba(255, 255, 255, 0.05);
+            --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(255, 255, 255, 0));
+        }
+        
+        .via-muted\/90 {
+            --tw-gradient-stops: var(--tw-gradient-from), rgba(255, 255, 255, 0.045), var(--tw-gradient-to, rgba(255, 255, 255, 0));
+        }
+        
+        .to-muted\/80 {
+            --tw-gradient-to: rgba(255, 255, 255, 0.04);
+        }
+        
+        .border-border\/50 {
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        /* Input area */
+        .flex {
+            display: flex;
+        }
+        
+        .gap-3 {
+            gap: 12px;
+        }
+        
+        .space-y-1 > * + * {
+            margin-top: 4px;
+        }
+        
+        /* Input field */
+        .h-9 {
+            height: 36px;
+        }
+        
+        .w-full {
+            width: 100%;
+        }
+        
+        .rounded-md {
+            border-radius: 6px;
+        }
+        
+        .border {
+            border-width: 1px;
+        }
+        
+        .border-border {
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .px-3 {
+            padding-left: 12px;
+            padding-right: 12px;
+        }
+        
+        .py-1 {
+            padding-top: 4px;
+            padding-bottom: 4px;
+        }
+        
+        .text-sm {
+            font-size: 14px;
+            line-height: 20px;
+        }
+        
+        .text-foreground {
+            color: #ffffff;
+        }
+        
+        .placeholder\:text-muted-foreground::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        .transition-all {
+            transition-property: all;
+            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+            transition-duration: 150ms;
+        }
+        
+        .duration-200 {
+            transition-duration: 200ms;
+        }
+        
+        .focus-visible\:outline-none:focus-visible {
+            outline: 2px solid transparent;
+            outline-offset: 2px;
+        }
+        
+        .focus-visible\:ring-2:focus-visible {
+            --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
+            --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);
+            box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
+        }
+        
+        .focus-visible\:ring-ring:focus-visible {
+            --tw-ring-color: #ff6b35;
+        }
+        
+        .focus-visible\:ring-offset-0:focus-visible {
+            --tw-ring-offset-width: 0px;
+        }
+        
+        .focus-visible\:border-accent:focus-visible {
+            border-color: #ff6b35;
+        }
+        
+        .focus-visible\:shadow-md:focus-visible {
+            --tw-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
+        }
+        
+        .focus-visible\:shadow-accent\/20:focus-visible {
+            --tw-shadow: 0 4px 6px -1px rgba(255, 107, 53, 0.2), 0 2px 4px -1px rgba(255, 107, 53, 0.2);
+            box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
+        }
+        
+        .disabled\:cursor-not-allowed:disabled {
+            cursor: not-allowed;
+        }
+        
+        .disabled\:opacity-50:disabled {
+            opacity: 0.5;
+        }
+        
+        .bg-gradient-to-r {
+            background: linear-gradient(to right, var(--tw-gradient-stops));
+        }
+        
+        .from-input {
+            --tw-gradient-from: #1a1a1a;
+            --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(26, 26, 26, 0));
+        }
+        
+        .to-input\/90 {
+            --tw-gradient-to: rgba(26, 26, 26, 0.9);
+        }
+        
+        .flex-1 {
+            flex: 1 1 0%;
+        }
+        
+        .glass-effect {
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+        
+        /* Send button */
+        .inline-flex {
+            display: inline-flex;
+        }
+        
+        .justify-center {
+            justify-content: center;
+        }
+        
+        .font-medium {
+            font-weight: 500;
+        }
+        
+        .transition-all {
+            transition-property: all;
+            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+            transition-duration: 150ms;
+        }
+        
+        .duration-200 {
+            transition-duration: 200ms;
+        }
+        
+        .focus-visible\:outline-none:focus-visible {
+            outline: 2px solid transparent;
+            outline-offset: 2px;
+        }
+        
+        .focus-visible\:ring-2:focus-visible {
+            --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
+            --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);
+            box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
+        }
+        
+        .focus-visible\:ring-ring:focus-visible {
+            --tw-ring-color: #ff6b35;
+        }
+        
+        .focus-visible\:ring-offset-2:focus-visible {
+            --tw-ring-offset-width: 8px;
+        }
+        
+        .disabled\:pointer-events-none:disabled {
+            pointer-events: none;
+        }
+        
+        .disabled\:opacity-50:disabled {
+            opacity: 0.5;
+        }
+        
+        .h-8 {
+            height: 32px;
+        }
+        
+        .px-3 {
+            padding-left: 12px;
+            padding-right: 12px;
+        }
+        
+        .text-xs {
+            font-size: 12px;
+            line-height: 16px;
+        }
+        
+        .bg-gradient-to-r {
+            background: linear-gradient(to right, var(--tw-gradient-stops));
+        }
+        
+        .from-primary {
+            --tw-gradient-from: #ff8c42;
+            --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(255, 140, 66, 0));
+        }
+        
+        .to-primary\/90 {
+            --tw-gradient-to: rgba(255, 140, 66, 0.9);
+        }
+        
+        .text-primary-foreground {
+            color: #ffffff;
+        }
+        
+        .hover\:from-primary\/90:hover {
+            --tw-gradient-from: rgba(255, 140, 66, 0.9);
+            --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(255, 140, 66, 0.9));
+        }
+        
+        .hover\:to-primary\/80:hover {
+            --tw-gradient-to: rgba(255, 140, 66, 0.8);
+        }
+        
+        .shadow-primary\/25 {
+            --tw-shadow: 0 4px 6px -1px rgba(255, 140, 66, 0.25), 0 2px 4px -1px rgba(255, 140, 66, 0.25);
+            box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
+        }
+        
+        .hover\:shadow-lg:hover {
+            --tw-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
+        }
+        
+        .hover\:shadow-primary\/30:hover {
+            --tw-shadow: 0 10px 15px -3px rgba(255, 140, 66, 0.3), 0 4px 6px -2px rgba(255, 140, 66, 0.3);
+            box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
+        }
+        
+        .shadow-md {
+            --tw-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
+        }
+        
+        /* Resize handle */
+        .absolute {
+            position: absolute;
+        }
+        
+        .top-0 {
+            top: 0;
+        }
+        
+        .right-0 {
+            right: 0;
+        }
+        
+        .w-1 {
+            width: 4px;
+        }
+        
+        .h-full {
+            height: 100%;
+        }
+        
+        .cursor-ew-resize {
+            cursor: ew-resize;
+        }
+        
+        .bg-transparent {
+            background-color: transparent;
+        }
+        
+        .hover\:bg-accent\/50:hover {
+            background-color: rgba(255, 107, 53, 0.5);
+        }
+        
+        .transition-colors {
+            transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+            transition-duration: 150ms;
+        }
+        
+        /* SVG styling */
+        svg {
+            fill: currentColor;
+            stroke: currentColor;
+        }
+        
+        /* Prevent zooming */
+        input, button, select, textarea {
+            -webkit-text-size-adjust: 100%;
+            -ms-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+        }
+        
+        /* Button styling */
+        button {
+            background: transparent;
+            border: none;
+            color: inherit;
+            font-family: inherit;
+            cursor: pointer;
+            outline: none;
+        }
+        
+        button:hover {
+            opacity: 0.9;
+        }
+        
+        button:active {
+            transform: scale(0.98);
+        }
+        
+        /* Input styling */
+        input[type="text"] {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            font-family: inherit;
+            font-size: 14px;
+            outline: none;
+        }
+        
+        input[type="text"]::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        input[type="text"]:focus {
+            border-color: #ff6b35;
+            box-shadow: 0 0 0 2px rgba(255, 107, 53, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <div id="root">
+        <div class="relative" style="width: 100%; height: 100%;">
+            <div class="border rounded-lg overflow-hidden bg-gradient-to-br from-card to-card/80 shadow-lg shadow-black/5 h-full border-l border-border/50 panel-shadow" style="height: 100%;">
+                <!-- Header -->
+                <div class="h-10 bg-gradient-to-r from-muted/50 to-muted/30 border-b border-border flex items-center px-3">
+                    <div class="mr-2">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="h-4 w-4">
+                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10z" fill="currentColor"></path>
+                        </svg>
+                    </div>
+                    <span class="text-sm font-medium text-foreground">AI Assistant</span>
+                </div>
+                
+                <!-- Content -->
+                <div class="flex-1 overflow-hidden flex flex-col" style="height: calc(100% - 40px);">
+                    <!-- Chat Area - Takes up most of the space -->
+                    <div class="flex-1 p-4 overflow-auto chat-container">
+                        <div class="bg-gradient-to-br from-background/80 via-background/90 to-card/50 rounded-xl p-4 h-full overflow-auto border border-border/30 shadow-inner chat-area">
+                            <div class="space-y-4">
+                                <!-- AI Message -->
+                                <div class="bg-gradient-to-r from-primary/15 via-primary/10 to-primary/5 rounded-xl p-4 border border-primary/20 shadow-sm animate-slide-up">
+                                    <p class="text-sm leading-relaxed">Hello! I'm your AI assistant. I can help you with game development, scripting, design patterns, and optimization techniques.</p>
+                                </div>
+                                
+                                <!-- User Message -->
+                                <div class="bg-gradient-to-r from-muted via-muted/90 to-muted/80 rounded-xl p-4 ml-8 border border-border/50 shadow-sm animate-slide-up" style="animation-delay: 100ms;">
+                                    <p class="text-sm">How can I create a smooth player movement script with physics?</p>
+                                </div>
+                                
+                                <!-- AI Response -->
+                                <div class="bg-gradient-to-r from-primary/15 via-primary/10 to-primary/5 rounded-xl p-4 border border-primary/20 shadow-sm animate-slide-up" style="animation-delay: 200ms;">
+                                    <p class="text-sm leading-relaxed">I can help you create a physics-based movement script! Here's a comprehensive approach using Rigidbody components...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Input Area - Fixed at bottom -->
+                    <div class="p-4 border-t border-border/30 bg-gradient-to-r from-card/50 to-card/30 input-area">
+                        <div class="flex gap-3">
+                            <div class="flex-1">
+                                <input class="w-full h-9 rounded-md border border-border px-3 py-1 text-sm text-foreground placeholder:text-muted-foreground transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-0 focus-visible:border-accent focus-visible:shadow-md focus-visible:shadow-accent/20 disabled:cursor-not-allowed disabled:opacity-50 bg-gradient-to-r from-input to-input/90 glass-effect" placeholder="Ask me anything about game development..." value="">
+                            </div>
+                            <button class="inline-flex items-center justify-center rounded-md font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 h-8 px-3 text-xs bg-gradient-to-r from-primary to-primary/90 text-primary-foreground hover:from-primary/90 hover:to-primary/80 shadow-primary/25 hover:shadow-lg hover:shadow-primary/30 shadow-md">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="h-4 w-4">
+                                    <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" stroke="currentColor" stroke-width="2" fill="none"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Resize Handle -->
+                <div class="absolute top-0 right-0 w-1 h-full cursor-ew-resize bg-transparent hover:bg-accent/50 transition-colors"></div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Disable zoom through JavaScript
+        (function() {
+            'use strict';
+            
+            // Prevent keyboard shortcuts
+            document.addEventListener('keydown', function(e) {
+                if ((e.ctrlKey || e.metaKey) && 
+                    (e.key === '+' || e.key === '-' || e.key === '=' || e.key === '0')) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log('DEBUG: Zoom shortcut prevented');
+                    return false;
+                }
+            }, true);
+            
+            // Prevent wheel zoom
+            document.addEventListener('wheel', function(e) {
+                if (e.ctrlKey || e.metaKey) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log('DEBUG: Ctrl+wheel zoom prevented');
+                    return false;
+                }
+            }, { passive: false });
+            
+            // Prevent touch zoom
+            document.addEventListener('gesturestart', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('DEBUG: Touch zoom prevented');
+                return false;
+            }, { passive: false });
+            
+            // Prevent double-tap zoom
+            document.addEventListener('touchend', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('DEBUG: Double-tap zoom prevented');
+                return false;
+            }, false);
+            
+            // Set viewport meta tag
+            const viewport = document.querySelector('meta[name="viewport"]');
+            if (viewport) {
+                viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
+            } else {
+                const meta = document.createElement('meta');
+                meta.name = 'viewport';
+                meta.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no';
+                document.head.appendChild(meta);
+            }
+            
+            console.log('DEBUG: Zoom prevention JavaScript injected successfully');
+        })();
+        
+        // Python bridge for AI assistant
+        window.pythonBridge = {
+            // Send message
+            sendMessage: function(message) {
+                console.log('DEBUG: Sending message:', message);
+                // TODO: Implement message sending
+            },
+            
+            // Add message to chat
+            addMessage: function(message, isUser) {
+                console.log('DEBUG: Adding message:', message, 'isUser:', isUser);
+                // TODO: Implement message adding
+            },
+            
+            // Clear chat
+            clearChat: function() {
+                console.log('DEBUG: Clearing chat');
+                // TODO: Implement chat clearing
+            },
+            
+            // Set typing indicator
+            setTyping: function(isTyping) {
+                console.log('DEBUG: Setting typing indicator:', isTyping);
+                // TODO: Implement typing indicator
+            }
+        };
+        
+        console.log('DEBUG: Python bridge injected successfully');
+        
+        // Add event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            const input = document.querySelector('input[type="text"]');
+            const sendButton = document.querySelector('button');
+            
+            // Force the content to fill the full height
+            function resizeContent() {
+                const root = document.getElementById('root');
+                const container = root.querySelector('.relative');
+                const content = container.querySelector('.border.rounded-lg');
+                
+                if (root && container && content) {
+                    // Get the viewport height
+                    const viewportHeight = window.innerHeight;
+                    const viewportWidth = window.innerWidth;
+                    
+                    // Set container to full viewport size
+                    container.style.width = viewportWidth + 'px';
+                    container.style.height = viewportHeight + 'px';
+                    
+                    // Set content to full container size
+                    content.style.width = '100%';
+                    content.style.height = '100%';
+                    
+                    console.log('DEBUG: Resized content to:', viewportWidth + 'x' + viewportHeight);
+                }
+            }
+            
+            // Initial resize
+            resizeContent();
+            
+            // Resize on window resize
+            window.addEventListener('resize', resizeContent);
+            
+            if (input && sendButton) {
+                // Send button click
+                sendButton.addEventListener('click', function() {
+                    const message = input.value.trim();
+                    if (message) {
+                        window.pythonBridge.sendMessage(message);
+                        input.value = '';
+                    }
+                });
+                
+                // Enter key press
+                input.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        const message = input.value.trim();
+                        if (message) {
+                            window.pythonBridge.sendMessage(message);
+                            input.value = '';
+                        }
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

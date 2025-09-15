@@ -1,0 +1,105 @@
+{
+    "engine": {
+        "window": {
+            "title": "Nexlify AI-Driven Game Engine",
+            "width": 1280,
+            "height": 720,
+            "fullscreen": false,
+            "vsync": true
+        },
+        "rendering": {
+            "target_fps": 60,
+            "enable_validation_layers": true,
+            "enable_debug_markers": false,
+            "msaa_samples": 4
+        },
+        "physics": {
+            "enabled": true,
+            "gravity": [0.0, -9.81, 0.0],
+            "fixed_timestep": 0.0166667,
+            "max_substeps": 10
+        },
+        "audio": {
+            "enabled": true,
+            "sample_rate": 44100,
+            "channels": 2,
+            "buffer_size": 1024
+        }
+    },
+    "ai": {
+        "enabled": true,
+        "provider": "openai",
+        "openai": {
+            "api_key": "",
+            "model": "gpt-4",
+            "temperature": 0.7,
+            "max_tokens": 2048
+        },
+        "huggingface": {
+            "enabled": false,
+            "model": "microsoft/DialoGPT-medium",
+            "local_model_path": ""
+        },
+        "fallback": {
+            "enabled": true,
+            "use_template_code": true
+        }
+    },
+    "assets": {
+        "output_directory": "generated_assets",
+        "models_directory": "models",
+        "textures_directory": "textures",
+        "audio_directory": "audio",
+        "auto_generate_materials": true,
+        "texture_resolution": {
+            "default": 512,
+            "high_quality": 1024,
+            "low_quality": 256
+        }
+    },
+    "development": {
+        "logging": {
+            "level": "info",
+            "log_to_file": true,
+            "log_to_console": true,
+            "log_filename": "nexlify.log"
+        },
+        "debug": {
+            "enable_debug_rendering": false,
+            "enable_profiling": false,
+            "enable_wireframe": false,
+            "enable_bounding_boxes": false
+        },
+        "hot_reload": {
+            "enabled": true,
+            "watch_directories": ["assets", "scripts"],
+            "reload_on_change": true
+        }
+    },
+    "input": {
+        "keyboard": {
+            "enable_text_input": true,
+            "repeat_delay": 500,
+            "repeat_rate": 30
+        },
+        "mouse": {
+            "sensitivity": 1.0,
+            "invert_y": false,
+            "enable_raw_input": true
+        },
+        "gamepad": {
+            "enabled": true,
+            "deadzone": 0.1,
+            "vibration": true
+        }
+    },
+    "scenes": {
+        "default_scene": "main_menu",
+        "auto_save": true,
+        "auto_save_interval": 300,
+        "scene_transitions": {
+            "fade_duration": 0.5,
+            "crossfade": true
+        }
+    }
+}

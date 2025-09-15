@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Center Panel - 3D Viewport</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0a0a0a;
+            color: #ffffff;
+            overflow: hidden;
+            /* Prevent zooming */
+            -webkit-text-size-adjust: 100%;
+            -ms-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+            /* Prevent user selection and zoom */
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            /* Prevent touch zoom */
+            touch-action: manipulation;
+        }
+        
+        #root {
+            /* Prevent zooming */
+            -webkit-text-size-adjust: 100%;
+            -ms-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+            /* Fixed size to prevent scaling */
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+        /* Main container */
+        .flex-1 {
+            flex: 1 1 0%;
+        }
+        
+        .flex {
+            display: flex;
+        }
+        
+        .flex-col {
+            flex-direction: column;
+        }
+        
+        /* Tab bar */
+        .h-12 {
+            height: 48px;
+        }
+        
+        .bg-gradient-to-r {
+            background: linear-gradient(to right, var(--tw-gradient-stops));
+        }
+        
+        .from-card\/50 {
+            --tw-gradient-from: rgba(26, 26, 26, 0.5);
+            --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(26, 26, 26, 0));
+        }
+        
+        .to-card\/30 {
+            --tw-gradient-to: rgba(26, 26, 26, 0.3);
+        }
+        
+        .border-b {
+            border-bottom-width: 1px;
+        }
+        
+        .border-border\/30 {
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .items-center {
+            align-items: center;
+        }
+        
+        .px-4 {
+            padding-left: 16px;
+            padding-right: 16px;
+        }
+        
+        .gap-2 {
+            gap: 8px;
+        }
+        
+        /* Tab buttons */
+        .px-4 {
+            padding-left: 16px;
+            padding-right: 16px;
+        }
+        
+        .py-2 {
+            padding-top: 8px;
+            padding-bottom: 8px;
+        }
+        
+        .rounded-lg {
+            border-radius: 8px;
+        }
+        
+        .text-sm {
+            font-size: 14px;
+            line-height: 20px;
+        }
+        
+        .font-medium {
+            font-weight: 500;
+        }
+        
+        .transition-all {
+            transition-property: all;
+            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+            transition-duration: 150ms;
+        }
+        
+        .duration-200 {
+            transition-duration: 200ms;
+        }
+        
+        .bg-gradient-to-r {
+            background: linear-gradient(to right, var(--tw-gradient-stops));
+        }
+        
+        .from-primary\/20 {
+            --tw-gradient-from: rgba(255, 140, 66, 0.2);
+            --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(255, 140, 66, 0));
+        }
+        
+        .to-accent\/20 {
+            --tw-gradient-to: rgba(255, 107, 53, 0.2);
+        }
+        
+        .text-primary {
+            color: #ff8c42;
+        }
+        
+        .border {
+            border-width: 1px;
+        }
+        
+        .border-primary\/30 {
+            border-color: rgba(255, 140, 66, 0.3);
+        }
+        
+        .shadow-sm {
+            --tw-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
+        }
+        
+        /* Hover states */
+        .hover\:bg-gradient-to-r:hover {
+            background: linear-gradient(to right, var(--tw-gradient-stops));
+        }
+        
+        .hover\:from-muted\/30:hover {
+            --tw-gradient-from: rgba(255, 255, 255, 0.05);
+            --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(255, 255, 255, 0));
+        }
+        
+        .hover\:to-muted\/20:hover {
+            --tw-gradient-to: rgba(255, 255, 255, 0.02);
+        }
+        
+        .text-muted-foreground {
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        .hover\:text-foreground:hover {
+            color: #ffffff;
+        }
+        
+        /* Add button */
+        .w-8 {
+            width: 32px;
+        }
+        
+        .h-8 {
+            height: 32px;
+        }
+        
+        .justify-center {
+            justify-content: center;
+        }
+        
+        .h-4 {
+            height: 16px;
+        }
+        
+        .w-4 {
+            width: 16px;
+        }
+        
+        .ml-1 {
+            margin-left: 4px;
+        }
+        
+        .hover\:bg-primary\/20:hover {
+            background-color: rgba(255, 140, 66, 0.2);
+        }
+        
+        /* Viewport area */
+        .bg-gradient-to-br {
+            background: linear-gradient(to bottom right, var(--tw-gradient-stops));
+        }
+        
+        .from-muted\/10 {
+            --tw-gradient-from: rgba(255, 255, 255, 0.02);
+            --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(255, 255, 255, 0));
+        }
+        
+        .via-background {
+            --tw-gradient-stops: var(--tw-gradient-from), #0a0a0a, var(--tw-gradient-to, rgba(10, 10, 10, 0));
+        }
+        
+        .to-muted\/5 {
+            --tw-gradient-to: rgba(255, 255, 255, 0.01);
+        }
+        
+        .relative {
+            position: relative;
+        }
+        
+        .p-4 {
+            padding: 16px;
+        }
+        
+        /* Viewport container */
+        .rounded-lg {
+            border-radius: 8px;
+        }
+        
+        .overflow-hidden {
+            overflow: hidden;
+        }
+        
+        .from-card {
+            --tw-gradient-from: #1a1a1a;
+            --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(26, 26, 26, 0));
+        }
+        
+        .to-card\/80 {
+            --tw-gradient-to: rgba(26, 26, 26, 0.8);
+        }
+        
+        .shadow-lg {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        
+        .shadow-black\/5 {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        
+        .h-full {
+            height: 100%;
+        }
+        
+        .border {
+            border-width: 1px;
+        }
+        
+        .border-border\/50 {
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        /* Viewport content */
+        .items-center {
+            align-items: center;
+        }
+        
+        .justify-center {
+            justify-content: center;
+        }
+        
+        .from-card\/50 {
+            --tw-gradient-from: rgba(26, 26, 26, 0.5);
+            --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(26, 26, 26, 0));
+        }
+        
+        .to-card\/20 {
+            --tw-gradient-to: rgba(26, 26, 26, 0.2);
+        }
+        
+        .rounded-lg {
+            border-radius: 8px;
+        }
+        
+        /* Minimap */
+        .absolute {
+            position: absolute;
+        }
+        
+        .top-4 {
+            top: 16px;
+        }
+        
+        .right-4 {
+            right: 16px;
+        }
+        
+        .w-32 {
+            width: 128px;
+        }
+        
+        .h-24 {
+            height: 96px;
+        }
+        
+        .from-background\/80 {
+            --tw-gradient-from: rgba(10, 10, 10, 0.8);
+            --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(10, 10, 10, 0));
+        }
+        
+        .to-card\/60 {
+            --tw-gradient-to: rgba(26, 26, 26, 0.6);
+        }
+        
+        .border-border\/50 {
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .p-2 {
+            padding: 8px;
+        }
+        
+        .text-xs {
+            font-size: 12px;
+            line-height: 16px;
+        }
+        
+        .text-muted-foreground {
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        .mb-1 {
+            margin-bottom: 4px;
+        }
+        
+        .w-full {
+            width: 100%;
+        }
+        
+        .h-full {
+            height: 100%;
+        }
+        
+        .from-primary {
+            --tw-gradient-from: #ff8c42;
+            --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(255, 140, 66, 0));
+        }
+        
+        .via-accent {
+            --tw-gradient-stops: var(--tw-gradient-from), #ff6b35, var(--tw-gradient-to, rgba(255, 107, 53, 0));
+        }
+        
+        .to-primary {
+            --tw-gradient-to: #ff8c42;
+        }
+        
+        .border-border\/30 {
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .relative {
+            position: relative;
+        }
+        
+        /* Player dot */
+        .top-1\/2 {
+            top: 50%;
+        }
+        
+        .left-1\/2 {
+            left: 50%;
+        }
+        
+        .w-1 {
+            width: 4px;
+        }
+        
+        .h-1 {
+            height: 4px;
+        }
+        
+        .bg-primary {
+            background-color: #ff8c42;
+        }
+        
+        .rounded-full {
+            border-radius: 9999px;
+        }
+        
+        .transform {
+            transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+        }
+        
+        .-translate-x-1\/2 {
+            --tw-translate-x: -50%;
+            transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+        }
+        
+        .-translate-y-1\/2 {
+            --tw-translate-y: -50%;
+            transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+        }
+        
+        /* Main content */
+        .text-center {
+            text-align: center;
+        }
+        
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .w-24 {
+            width: 96px;
+        }
+        
+        .h-24 {
+            height: 96px;
+        }
+        
+        .mx-auto {
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .mb-6 {
+            margin-bottom: 24px;
+        }
+        
+        .rounded-3xl {
+            border-radius: 24px;
+        }
+        
+        .shadow-2xl {
+            --tw-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
+        }
+        
+        .animate-glow {
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+        
+        @keyframes glow {
+            from {
+                box-shadow: 0 0 20px rgba(255, 140, 66, 0.5);
+            }
+            to {
+                box-shadow: 0 0 40px rgba(255, 140, 66, 0.8);
+            }
+        }
+        
+        .h-12 {
+            height: 48px;
+        }
+        
+        .w-12 {
+            width: 48px;
+        }
+        
+        .text-white {
+            color: #ffffff;
+        }
+        
+        /* Title and description */
+        .text-2xl {
+            font-size: 24px;
+            line-height: 32px;
+        }
+        
+        .font-bold {
+            font-weight: 700;
+        }
+        
+        .mb-3 {
+            margin-bottom: 12px;
+        }
+        
+        .bg-gradient-to-r {
+            background: linear-gradient(to right, var(--tw-gradient-stops));
+        }
+        
+        .from-primary {
+            --tw-gradient-from: #ff8c42;
+            --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(255, 140, 66, 0));
+        }
+        
+        .to-accent {
+            --tw-gradient-to: #ff6b35;
+        }
+        
+        .bg-clip-text {
+            -webkit-background-clip: text;
+            background-clip: text;
+        }
+        
+        .text-transparent {
+            color: transparent;
+        }
+        
+        .max-w-md {
+            max-width: 28rem;
+        }
+        
+        .mb-4 {
+            margin-bottom: 16px;
+        }
+        
+        /* Controls info */
+        .gap-4 {
+            gap: 16px;
+        }
+        
+        .gap-1 {
+            gap: 4px;
+        }
+        
+        /* SVG styling */
+        svg {
+            fill: currentColor;
+            stroke: currentColor;
+        }
+        
+        /* Prevent zooming */
+        input, button, select, textarea {
+            -webkit-text-size-adjust: 100%;
+            -ms-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+        }
+        
+        /* Button styling */
+        button {
+            background: transparent;
+            border: none;
+            color: inherit;
+            font-family: inherit;
+            cursor: pointer;
+            outline: none;
+        }
+        
+        button:hover {
+            opacity: 0.8;
+        }
+        
+        button:active {
+            transform: scale(0.98);
+        }
+    </style>
+</head>
+<body>
+    <div id="root">
+        <div class="flex-1 flex flex-col">
+            <!-- Tab Bar -->
+            <div class="h-12 bg-gradient-to-r from-card/50 to-card/30 border-b border-border/30 flex items-center px-4 gap-2">
+                <!-- Main Scene Tab (Active) -->
+                <button class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 bg-gradient-to-r from-primary/20 to-accent/20 text-primary border border-primary/30 shadow-sm">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="h-3 w-3">
+                        <path d="M12 2l8 4-8 4-8-4 8-4z" stroke="currentColor" stroke-width="2" fill="none"></path>
+                        <path d="M4 10l8 4 8-4M4 14l8 4 8-4" stroke="currentColor" stroke-width="2" fill="none"></path>
+                    </svg>
+                    Main Scene
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="h-3 w-3 ml-1 hover:bg-primary/20 rounded">
+                        <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2"></path>
+                    </svg>
+                </button>
+                
+                <!-- Game Logic Tab -->
+                <button class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 hover:bg-gradient-to-r hover:from-muted/30 hover:to-muted/20 text-muted-foreground hover:text-foreground">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="h-3 w-3">
+                        <path d="M16 18l6-6-6-6M8 6l-6 6 6 6" stroke="currentColor" stroke-width="2" fill="none"></path>
+                    </svg>
+                    Game Logic
+                </button>
+                
+                <!-- Materials Tab -->
+                <button class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 hover:bg-gradient-to-r hover:from-muted/30 hover:to-muted/20 text-muted-foreground hover:text-foreground">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="h-3 w-3">
+                        <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" stroke-width="2" fill="none"></rect>
+                        <circle cx="8.5" cy="8.5" r="1.5" fill="currentColor"></circle>
+                        <path d="M21 15l-5-5L5 21" stroke="currentColor" stroke-width="2" fill="none"></path>
+                    </svg>
+                    Materials
+                </button>
+                
+                <!-- Add Tab Button -->
+                <button class="flex items-center justify-center w-8 h-8 rounded-lg hover:bg-gradient-to-r hover:from-muted/30 hover:to-muted/20 transition-all duration-200">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="h-4 w-4 text-muted-foreground">
+                        <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2"></path>
+                    </svg>
+                </button>
+            </div>
+            
+            <!-- Viewport Area -->
+            <div class="flex-1 bg-gradient-to-br from-muted/10 via-background to-muted/5 relative p-4">
+                <div class="rounded-lg overflow-hidden bg-gradient-to-br from-card to-card/80 shadow-lg shadow-black/5 h-full border border-border/50">
+                    <div class="flex-1 overflow-hidden">
+                        <div class="h-full flex items-center justify-center bg-gradient-to-br from-card/50 to-card/20 rounded-lg relative">
+                            <!-- Minimap -->
+                            <div class="absolute top-4 right-4 w-32 h-24 bg-gradient-to-br from-background/80 to-card/60 rounded-lg border border-border/50 p-2">
+                                <div class="text-xs text-muted-foreground mb-1">Minimap</div>
+                                <div class="w-full h-full bg-gradient-to-br from-primary via-accent to-primary rounded border border-border/30 relative">
+                                    <div class="absolute top-1/2 left-1/2 w-1 h-1 bg-primary rounded-full transform -translate-x-1/2 -translate-y-1/2"></div>
+                                </div>
+                            </div>
+                            
+                            <!-- Main Content -->
+                            <div class="text-center animate-fade-in">
+                                <div class="w-24 h-24 mx-auto mb-6 bg-gradient-to-br from-primary via-accent to-primary rounded-3xl flex items-center justify-center shadow-2xl animate-glow">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="h-12 w-12 text-white">
+                                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor" stroke-width="2" fill="none"></path>
+                                        <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2" fill="none"></circle>
+                                    </svg>
+                                </div>
+                                <h3 class="text-2xl font-bold mb-3 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">3D Viewport - MainScene</h3>
+                                <p class="text-muted-foreground max-w-md mb-4">Your game scene will render here with real-time preview and interactive controls</p>
+                                <div class="flex items-center justify-center gap-4 text-sm text-muted-foreground">
+                                    <div class="flex items-center gap-1">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="h-4 w-4">
+                                            <path d="M3 11l19-9-9 19-2-8-8-2z" fill="currentColor"></path>
+                                        </svg>
+                                        <span>WASD to navigate</span>
+                                    </div>
+                                    <div class="flex items-center gap-1">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="h-4 w-4">
+                                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor" stroke-width="2" fill="none"></path>
+                                            <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2" fill="none"></circle>
+                                        </svg>
+                                        <span>Mouse to look</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Disable zoom through JavaScript
+        (function() {
+            'use strict';
+            
+            // Prevent keyboard shortcuts
+            document.addEventListener('keydown', function(e) {
+                if ((e.ctrlKey || e.metaKey) && 
+                    (e.key === '+' || e.key === '-' || e.key === '=' || e.key === '0')) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log('DEBUG: Zoom shortcut prevented');
+                    return false;
+                }
+            }, true);
+            
+            // Prevent wheel zoom
+            document.addEventListener('wheel', function(e) {
+                if (e.ctrlKey || e.metaKey) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log('DEBUG: Ctrl+wheel zoom prevented');
+                    return false;
+                }
+            }, { passive: false });
+            
+            // Prevent touch zoom
+            document.addEventListener('gesturestart', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('DEBUG: Touch zoom prevented');
+                return false;
+            }, { passive: false });
+            
+            // Prevent double-tap zoom
+            document.addEventListener('touchend', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('DEBUG: Double-tap zoom prevented');
+                return false;
+            }, false);
+            
+            // Set viewport meta tag
+            const viewport = document.querySelector('meta[name="viewport"]');
+            if (viewport) {
+                viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
+            } else {
+                const meta = document.createElement('meta');
+                meta.name = 'viewport';
+                meta.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no';
+                document.head.appendChild(meta);
+            }
+            
+            console.log('DEBUG: Zoom prevention JavaScript injected successfully');
+        })();
+        
+        // Python bridge for center panel
+        window.pythonBridge = {
+            // Tab management
+            switchTab: function(tabName) {
+                console.log('DEBUG: Switching to tab:', tabName);
+                // TODO: Implement tab switching logic
+            },
+            
+            // Add new tab
+            addTab: function(tabName) {
+                console.log('DEBUG: Adding new tab:', tabName);
+                // TODO: Implement add tab logic
+            },
+            
+            // Close tab
+            closeTab: function(tabName) {
+                console.log('DEBUG: Closing tab:', tabName);
+                // TODO: Implement close tab logic
+            },
+            
+            // Viewport controls
+            setViewportMode: function(mode) {
+                console.log('DEBUG: Setting viewport mode:', mode);
+                // TODO: Implement viewport mode switching
+            },
+            
+            // Minimap interaction
+            updateMinimap: function(data) {
+                console.log('DEBUG: Updating minimap:', data);
+                // TODO: Implement minimap updates
+            }
+        };
+        
+        console.log('DEBUG: Python bridge injected successfully');
+        
+        // Add click handlers for tabs
+        document.addEventListener('DOMContentLoaded', function() {
+            const tabs = document.querySelectorAll('button');
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const text = this.textContent.trim();
+                    if (text && text !== '+') {
+                        window.pythonBridge.switchTab(text);
+                    }
+                });
+            });
+            
+            // Add tab button
+            const addButton = document.querySelector('button:last-child');
+            if (addButton) {
+                addButton.addEventListener('click', function() {
+                    window.pythonBridge.addTab('New Tab');
+                });
+            }
+        });
+    </script>
+</body>
+</html>

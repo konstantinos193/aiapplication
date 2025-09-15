@@ -1,0 +1,120 @@
+1. Core MVP:
+
+AI chat interface for command input.
+
+Generation of 3D objects and their placement in interactive scenes.
+
+Basic game logic scripting (movement, collision, interactions).
+
+Simple viewport to preview and play the scene in real-time.
+
+
+
+2. Modules:
+
+Prompt Parsing:
+
+Understand natural language instructions.
+
+Translate commands to engine-specific actions.
+
+Validate commands and handle ambiguous input.
+
+
+3D & Game Asset Generation:
+
+Generate 3D models (.obj, .glb) with AI.
+
+Create textures, materials, and shaders.
+
+Optimize meshes for real-time performance.
+
+
+Scene & World Composition:
+
+Place objects with position, rotation, and scale.
+
+Set up lights, cameras, and environmental effects.
+
+Implement physics objects, collisions, and constraints.
+
+Handle terrain, skyboxes, and background elements.
+
+
+Game Logic / Scripting:
+
+AI generates code for object behaviors.
+
+Event triggers (e.g., on collision, on click).
+
+NPC behaviors and AI scripting.
+
+Story events, dialogue, and branching paths.
+
+
+Visuals & Rendering:
+
+Apply shaders, lighting effects, and materials.
+
+Integrate animations and particle systems.
+
+Implement post-processing (bloom, shadows, reflections).
+
+Optimize frame rate and rendering performance.
+
+
+
+
+3. Tech Stack 
+
+Python for scripting and AI command integration.
+
+Blender or PyThreeJS for 3D asset generation.
+
+AI APIs (like OpenAI, Point-E, DreamFusion) for text-to-3D and text-to-code.
+
+Local or cloud runtime for game testing and rendering.
+
+Optional integration with web frameworks for online sharing.
+
+
+
+4. Next steps
+
+Define all AI commands the engine will recognize.
+
+Create a command parser that maps language input to engine actions.
+
+Implement basic object generation (cube, sphere, plane).
+
+Add AI-assisted placement and object grouping.
+
+Create simple physics integration (gravity, collisions).
+
+Implement a minimal scripting system for object behavior.
+
+AI-generated story elements and event triggers.
+
+Develop a viewport for real-time preview and basic interactivity.
+
+Expand asset generation: advanced shapes, textures, shaders.
+
+Integrate lighting, environmental effects, and cameras.
+
+Add more complex physics and animation capabilities.
+
+Expand AI to generate code for NPC behaviors, quests, and interactions.
+
+Optimize scene performance for larger environments.
+
+Add saving/loading of scenes and game states.
+
+Test and iterate user input handling and AI interpretation.
+
+Plan modular expansion for multiplayer, online features, or advanced rendering.
+
+
+
+
+The goal is to have a system where you describe a game scene or mechanics, and the AI builds a fully interactive game with all elements integrated.
+

@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Inspector</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0a0a0a;
+            color: #ffffff;
+            overflow: hidden;
+            /* Prevent zooming */
+            -webkit-text-size-adjust: 100%;
+            -ms-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+            /* Prevent user selection and zoom */
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            /* Prevent touch zoom */
+            touch-action: manipulation;
+        }
+        
+        #root {
+            /* Prevent zooming */
+            -webkit-text-size-adjust: 100%;
+            -ms-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+            /* Fixed size to prevent scaling */
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+        /* Main container */
+        .border {
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .rounded-lg {
+            border-radius: 8px;
+        }
+        
+        .overflow-hidden {
+            overflow: hidden;
+        }
+        
+        .bg-gradient-to-br {
+            background: linear-gradient(to bottom right, var(--tw-gradient-stops));
+        }
+        
+        .from-card {
+            --tw-gradient-from: #1a1a1a;
+            --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(26, 26, 26, 0));
+        }
+        
+        .to-card\/80 {
+            --tw-gradient-to: rgba(26, 26, 26, 0.8);
+        }
+        
+        .shadow-lg {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        
+        .shadow-black\/5 {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        
+        .h-full {
+            height: 100%;
+        }
+        
+        .border-r {
+            border-right-width: 1px;
+        }
+        
+        .border-t {
+            border-top-width: 1px;
+        }
+        
+        .border-border\/50 {
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .panel-shadow {
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+        }
+        
+        /* Header */
+        .h-10 {
+            height: 40px;
+        }
+        
+        .bg-gradient-to-r {
+            background: linear-gradient(to right, var(--tw-gradient-stops));
+        }
+        
+        .from-muted\/50 {
+            --tw-gradient-from: rgba(255, 255, 255, 0.05);
+            --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(255, 255, 255, 0));
+        }
+        
+        .to-muted\/30 {
+            --tw-gradient-to: rgba(255, 255, 255, 0.03);
+        }
+        
+        .border-b {
+            border-bottom-width: 1px;
+        }
+        
+        .border-border {
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .flex {
+            display: flex;
+        }
+        
+        .items-center {
+            align-items: center;
+        }
+        
+        .px-3 {
+            padding-left: 12px;
+            padding-right: 12px;
+        }
+        
+        .mr-2 {
+            margin-right: 8px;
+        }
+        
+        .h-4 {
+            height: 16px;
+        }
+        
+        .w-4 {
+            width: 16px;
+        }
+        
+        .text-sm {
+            font-size: 14px;
+            line-height: 20px;
+        }
+        
+        .font-medium {
+            font-weight: 500;
+        }
+        
+        .text-foreground {
+            color: #ffffff;
+        }
+        
+        /* Content area */
+        .flex-1 {
+            flex: 1 1 0%;
+        }
+        
+        .p-4 {
+            padding: 16px;
+        }
+        
+        .overflow-auto {
+            overflow: auto;
+        }
+        
+        .space-y-6 > * + * {
+            margin-top: 24px;
+        }
+        
+        .space-y-3 > * + * {
+            margin-top: 12px;
+        }
+        
+        /* Object info */
+        .gap-2 {
+            gap: 8px;
+        }
+        
+        .p-3 {
+            padding: 12px;
+        }
+        
+        .bg-gradient-to-r {
+            background: linear-gradient(to right, var(--tw-gradient-stops));
+        }
+        
+        .from-primary\/10 {
+            --tw-gradient-from: rgba(255, 140, 66, 0.1);
+            --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(255, 140, 66, 0));
+        }
+        
+        .to-accent\/10 {
+            --tw-gradient-to: rgba(255, 107, 53, 0.1);
+        }
+        
+        .rounded-xl {
+            border-radius: 12px;
+        }
+        
+        .border {
+            border-width: 1px;
+        }
+        
+        .border-primary\/20 {
+            border-color: rgba(255, 140, 66, 0.2);
+        }
+        
+        .h-5 {
+            height: 20px;
+        }
+        
+        .w-5 {
+            width: 20px;
+        }
+        
+        .text-primary {
+            color: #ff8c42;
+        }
+        
+        .font-semibold {
+            font-weight: 600;
+        }
+        
+        .text-xs {
+            font-size: 12px;
+            line-height: 16px;
+        }
+        
+        .text-muted-foreground {
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        /* Transform section */
+        .text-accent {
+            color: #ff6b35;
+        }
+        
+        .text-foreground\/90 {
+            color: rgba(255, 255, 255, 0.9);
+        }
+        
+        .pl-6 {
+            padding-left: 24px;
+        }
+        
+        .mb-1 {
+            margin-bottom: 4px;
+        }
+        
+        .block {
+            display: block;
+        }
+        
+        .grid {
+            display: grid;
+        }
+        
+        .grid-cols-3 {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+        
+        .gap-2 {
+            gap: 8px;
+        }
+        
+        .space-y-1 > * + * {
+            margin-top: 4px;
+        }
+        
+        /* Input fields */
+        .h-9 {
+            height: 36px;
+        }
+        
+        .w-full {
+            width: 100%;
+        }
+        
+        .rounded-md {
+            border-radius: 6px;
+        }
+        
+        .border {
+            border-width: 1px;
+        }
+        
+        .px-3 {
+            padding-left: 12px;
+            padding-right: 12px;
+        }
+        
+        .py-1 {
+            padding-top: 4px;
+            padding-bottom: 4px;
+        }
+        
+        .text-foreground {
+            color: #ffffff;
+        }
+        
+        .placeholder\:text-muted-foreground::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        .transition-all {
+            transition-property: all;
+            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+            transition-duration: 150ms;
+        }
+        
+        .duration-200 {
+            transition-duration: 200ms;
+        }
+        
+        .focus-visible\:outline-none:focus-visible {
+            outline: 2px solid transparent;
+            outline-offset: 2px;
+        }
+        
+        .focus-visible\:ring-2:focus-visible {
+            --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
+            --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);
+            box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
+        }
+        
+        .focus-visible\:ring-ring:focus-visible {
+            --tw-ring-color: #ff6b35;
+        }
+        
+        .focus-visible\:ring-offset-0:focus-visible {
+            --tw-ring-offset-width: 0px;
+        }
+        
+        .focus-visible\:border-accent:focus-visible {
+            border-color: #ff6b35;
+        }
+        
+        .focus-visible\:shadow-md:focus-visible {
+            --tw-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
+        }
+        
+        .focus-visible\:shadow-accent\/20:focus-visible {
+            --tw-shadow: 0 4px 6px -1px rgba(255, 107, 53, 0.2), 0 2px 4px -1px rgba(255, 107, 53, 0.2);
+            box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
+        }
+        
+        .disabled\:cursor-not-allowed:disabled {
+            cursor: not-allowed;
+        }
+        
+        .disabled\:opacity-50:disabled {
+            opacity: 0.5;
+        }
+        
+        .bg-gradient-to-r {
+            background: linear-gradient(to right, var(--tw-gradient-stops));
+        }
+        
+        .from-input {
+            --tw-gradient-from: #1a1a1a;
+            --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(26, 26, 26, 0));
+        }
+        
+        .to-input\/90 {
+            --tw-gradient-to: rgba(26, 26, 26, 0.9);
+        }
+        
+        .text-center {
+            text-align: center;
+        }
+        
+        /* Add Component button */
+        .inline-flex {
+            display: inline-flex;
+        }
+        
+        .justify-center {
+            justify-content: center;
+        }
+        
+        .font-medium {
+            font-weight: 500;
+        }
+        
+        .transition-all {
+            transition-property: all;
+            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+            transition-duration: 150ms;
+        }
+        
+        .duration-200 {
+            transition-duration: 200ms;
+        }
+        
+        .focus-visible\:outline-none:focus-visible {
+            outline: 2px solid transparent;
+            outline-offset: 2px;
+        }
+        
+        .focus-visible\:ring-2:focus-visible {
+            --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
+            --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);
+            box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
+        }
+        
+        .focus-visible\:ring-ring:focus-visible {
+            --tw-ring-color: #ff6b35;
+        }
+        
+        .focus-visible\:ring-offset-2:focus-visible {
+            --tw-ring-offset-width: 8px;
+        }
+        
+        .disabled\:pointer-events-none:disabled {
+            pointer-events: none;
+        }
+        
+        .disabled\:opacity-50:disabled {
+            opacity: 0.5;
+        }
+        
+        .h-9 {
+            height: 36px;
+        }
+        
+        .px-4 {
+            padding-left: 16px;
+            padding-right: 16px;
+        }
+        
+        .text-sm {
+            font-size: 14px;
+            line-height: 20px;
+        }
+        
+        .border {
+            border-width: 1px;
+        }
+        
+        .border-border {
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .bg-transparent {
+            background-color: transparent;
+        }
+        
+        .text-foreground {
+            color: #ffffff;
+        }
+        
+        .hover\:bg-accent\/10:hover {
+            background-color: rgba(255, 107, 53, 0.1);
+        }
+        
+        .hover\:border-accent\/50:hover {
+            border-color: rgba(255, 107, 53, 0.5);
+        }
+        
+        .shadow-sm {
+            --tw-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
+        }
+        
+        .hover\:shadow-md:hover {
+            --tw-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
+        }
+        
+        .w-full {
+            width: 100%;
+        }
+        
+        .mr-2 {
+            margin-right: 8px;
+        }
+        
+        /* Input styling */
+        input[type="text"] {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            font-family: inherit;
+            font-size: 14px;
+            outline: none;
+        }
+        
+        input[type="text"]::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        input[type="text"]:focus {
+            border-color: #ff6b35;
+            box-shadow: 0 0 0 2px rgba(255, 107, 53, 0.2);
+        }
+        
+        /* SVG styling */
+        svg {
+            fill: currentColor;
+            stroke: currentColor;
+        }
+        
+        /* Prevent zooming */
+        input, button, select, textarea {
+            -webkit-text-size-adjust: 100%;
+            -ms-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div id="root">
+        <div class="border rounded-lg overflow-hidden bg-gradient-to-br from-card to-card/80 shadow-lg shadow-black/5 h-full border-r border-t border-border/50 panel-shadow">
+            <!-- Header -->
+            <div class="h-10 bg-gradient-to-r from-muted/50 to-muted/30 border-b border-border flex items-center px-3">
+                <div class="mr-2">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="h-4 w-4">
+                        <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2" fill="none"></circle>
+                        <path d="M12 1v6m0 6v6m11-7h-6m-6 0H1" stroke="currentColor" stroke-width="2"></path>
+                    </svg>
+                </div>
+                <span class="text-sm font-medium text-foreground">Inspector - Player</span>
+            </div>
+            
+            <!-- Content -->
+            <div class="flex-1 overflow-hidden">
+                <div class="p-4 overflow-auto h-full">
+                    <div class="space-y-6">
+                        <!-- Object Info -->
+                        <div class="space-y-3">
+                            <div class="flex items-center gap-2 p-3 bg-gradient-to-r from-primary/10 to-accent/10 rounded-xl border border-primary/20">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="h-5 w-5 text-primary">
+                                    <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" fill="currentColor"></path>
+                                </svg>
+                                <div>
+                                    <div class="font-semibold text-sm">Player</div>
+                                    <div class="text-xs text-muted-foreground">GameObject</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Transform -->
+                        <div class="space-y-3">
+                            <div class="flex items-center gap-2">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="h-4 w-4 text-accent">
+                                    <path d="M12 2v20M2 12h20" stroke="currentColor" stroke-width="2"></path>
+                                    <path d="M8 8l4-4 4 4M8 16l4 4 4-4M16 8l4 4-4 4M8 8L4 12l4 4" stroke="currentColor" stroke-width="2" fill="none"></path>
+                                </svg>
+                                <label class="text-sm font-semibold text-foreground/90">Transform</label>
+                            </div>
+                            <div class="space-y-3 pl-6">
+                                <!-- Position -->
+                                <div>
+                                    <label class="text-xs text-muted-foreground mb-1 block">Position</label>
+                                    <div class="grid grid-cols-3 gap-2">
+                                        <div class="space-y-1">
+                                            <input class="flex h-9 w-full rounded-md border border-border px-3 py-1 text-foreground placeholder:text-muted-foreground transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-0 focus-visible:border-accent focus-visible:shadow-md focus-visible:shadow-accent/20 disabled:cursor-not-allowed disabled:opacity-50 bg-gradient-to-r from-input to-input/90 text-center text-sm" placeholder="X: 0">
+                                        </div>
+                                        <div class="space-y-1">
+                                            <input class="flex h-9 w-full rounded-md border border-border px-3 py-1 text-foreground placeholder:text-muted-foreground transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-0 focus-visible:border-accent focus-visible:shadow-md focus-visible:shadow-accent/20 disabled:cursor-not-allowed disabled:opacity-50 bg-gradient-to-r from-input to-input/90 text-center text-sm" placeholder="Y: 0">
+                                        </div>
+                                        <div class="space-y-1">
+                                            <input class="flex h-9 w-full rounded-md border border-border px-3 py-1 text-foreground placeholder:text-muted-foreground transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-0 focus-visible:border-accent focus-visible:shadow-md focus-visible:shadow-accent/20 disabled:cursor-not-allowed disabled:opacity-50 bg-gradient-to-r from-input to-input/90 text-center text-sm" placeholder="Z: 0">
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Rotation -->
+                                <div>
+                                    <label class="text-xs text-muted-foreground mb-1 block">Rotation</label>
+                                    <div class="grid grid-cols-3 gap-2">
+                                        <div class="space-y-1">
+                                            <input class="flex h-9 w-full rounded-md border border-border px-3 py-1 text-foreground placeholder:text-muted-foreground transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-0 focus-visible:border-accent focus-visible:shadow-md focus-visible:shadow-accent/20 disabled:cursor-not-allowed disabled:opacity-50 bg-gradient-to-r from-input to-input/90 text-center text-sm" placeholder="X: 0°">
+                                        </div>
+                                        <div class="space-y-1">
+                                            <input class="flex h-9 w-full rounded-md border border-border px-3 py-1 text-foreground placeholder:text-muted-foreground transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-0 focus-visible:border-accent focus-visible:shadow-md focus-visible:shadow-accent/20 disabled:cursor-not-allowed disabled:opacity-50 bg-gradient-to-r from-input to-input/90 text-center text-sm" placeholder="Y: 0°">
+                                        </div>
+                                        <div class="space-y-1">
+                                            <input class="flex h-9 w-full rounded-md border border-border px-3 py-1 text-foreground placeholder:text-muted-foreground transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-0 focus-visible:border-accent focus-visible:shadow-md focus-visible:shadow-accent/20 disabled:cursor-not-allowed disabled:opacity-50 bg-gradient-to-r from-input to-input/90 text-center text-sm" placeholder="Z: 0°">
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Scale -->
+                                <div>
+                                    <label class="text-xs text-muted-foreground mb-1 block">Scale</label>
+                                    <div class="grid grid-cols-3 gap-2">
+                                        <div class="space-y-1">
+                                            <input class="flex h-9 w-full rounded-md border border-border px-3 py-1 text-foreground placeholder:text-muted-foreground transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-0 focus-visible:border-accent focus-visible:shadow-md focus-visible:shadow-accent/20 disabled:cursor-not-allowed disabled:opacity-50 bg-gradient-to-r from-input to-input/90 text-center text-sm" placeholder="X: 1">
+                                        </div>
+                                        <div class="space-y-1">
+                                            <input class="flex h-9 w-full rounded-md border border-border px-3 py-1 text-foreground placeholder:text-muted-foreground transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-0 focus-visible:border-accent focus-visible:shadow-md focus-visible:shadow-accent/20 disabled:cursor-not-allowed disabled:opacity-50 bg-gradient-to-r from-input to-input/90 text-center text-sm" placeholder="Y: 1">
+                                        </div>
+                                        <div class="space-y-1">
+                                            <input class="flex h-9 w-full rounded-md border border-border px-3 py-1 text-foreground placeholder:text-muted-foreground transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-0 focus-visible:border-accent focus-visible:shadow-md focus-visible:shadow-accent/20 disabled:cursor-not-allowed disabled:opacity-50 bg-gradient-to-r from-input to-input/90 text-center text-sm" placeholder="Z: 1">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Add Component Button -->
+                        <button class="inline-flex items-center justify-center rounded-md font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 h-9 px-4 text-sm border border-border bg-transparent text-foreground hover:bg-accent/10 hover:border-accent/50 shadow-sm hover:shadow-md w-full">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="h-4 w-4 mr-2">
+                                <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2"></path>
+                            </svg>
+                            Add Component
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Disable zoom through JavaScript
+        (function() {
+            'use strict';
+            
+            // Prevent keyboard shortcuts
+            document.addEventListener('keydown', function(e) {
+                if ((e.ctrlKey || e.metaKey) && 
+                    (e.key === '+' || e.key === '-' || e.key === '=' || e.key === '0')) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log('DEBUG: Zoom shortcut prevented');
+                    return false;
+                }
+            }, true);
+            
+            // Prevent wheel zoom
+            document.addEventListener('wheel', function(e) {
+                if (e.ctrlKey || e.metaKey) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log('DEBUG: Ctrl+wheel zoom prevented');
+                    return false;
+                }
+            }, { passive: false });
+            
+            // Prevent touch zoom
+            document.addEventListener('gesturestart', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('DEBUG: Touch zoom prevented');
+                return false;
+            }, { passive: false });
+            
+            // Prevent double-tap zoom
+            document.addEventListener('touchend', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('DEBUG: Double-tap zoom prevented');
+                return false;
+            }, false);
+            
+            // Set viewport meta tag
+            const viewport = document.querySelector('meta[name="viewport"]');
+            if (viewport) {
+                viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
+            } else {
+                const meta = document.createElement('meta');
+                meta.name = 'viewport';
+                meta.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no';
+                document.head.appendChild(meta);
+            }
+            
+            console.log('DEBUG: Zoom prevention JavaScript injected successfully');
+        })();
+        
+        // Python bridge for inspector
+        window.pythonBridge = {
+            // Update selected object
+            updateSelectedObject: function(objectName) {
+                console.log('DEBUG: Selected object updated:', objectName);
+                // Update the header title
+                const titleElement = document.querySelector('.text-sm.font-medium.text-foreground');
+                if (titleElement) {
+                    titleElement.textContent = `Inspector - ${objectName}`;
+                }
+            },
+            
+            // Update transform values
+            updateTransform: function(position, rotation, scale) {
+                console.log('DEBUG: Transform updated:', { position, rotation, scale });
+                // TODO: Update input values
+            },
+            
+            // Get transform values
+            getTransform: function() {
+                const inputs = document.querySelectorAll('input[type="text"]');
+                const values = Array.from(inputs).map(input => input.value);
+                return {
+                    position: values.slice(0, 3),
+                    rotation: values.slice(3, 6),
+                    scale: values.slice(6, 9)
+                };
+            }
+        };
+        
+        console.log('DEBUG: Python bridge injected successfully');
+    </script>
+</body>
+</html>

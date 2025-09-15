@@ -1,0 +1,97 @@
+---
+alwaysApply: true
+---
+## 1) Project Architecture
+- **Engine is modular** — each subsystem isolated into its own package.  
+- **ECS-driven core**: Entities are IDs, Components are dataclasses, Systems iterate over components.  
+- **Scene graph**: hierarchical transforms for cameras, objects, lights.  
+- **Event system**: decoupled publish/subscribe pattern.  
+- **Resource manager**: central caching for textures, audio, models, shaders.  
+- **Main loop** (fixed timestep):  
+  1. Handle input  
+  2. Run ECS systems  
+  3. Simulate physics  
+  4. Update scene graph  
+  5. Render frame  
+  6. Mix audio  
+
+---
+
+## 2) Folder Layout
+```
+engine/
+  core/         # Logging, config, platform abstractions
+  math/         # Vectors, matrices, quaternions (numpy-based)
+  ecs/          # Entity-Component-System
+  renderer/     # Rendering backend (moderngl, pyglet, or Vulkan wrapper)
+  physics/      # Collision + physics systems
+  audio/        # Sound playback
+  scene/        # Scene graph, serialization
+  scripting/    # Game logic scripting layer
+  editor/       # Optional tools & GUI
+  tests/        # Unit & integration tests
+
+assets/          # Shaders, textures, meshes, audio
+docs/            # Documentation
+```
+
+---
+
+## 3) Code Style
+- **Formatting**: Enforce `black` (88 cols).  
+- **Imports**: Sorted with `isort`, absolute preferred.  
+- **Linting**: `ruff` enforced in CI.  
+- **Typing**: Strict (`mypy --strict`, `from __future__ import annotations`).  
+- **Naming conventions**:  
+  - Classes → `PascalCase`  
+  - Functions/variables → `snake_case`  
+  - Constants → `UPPER_CASE`  
+  - Private → `_underscore_prefix`  
+- **Error handling**: Never swallow exceptions; raise descriptive errors.  
+- **Logging**: Always use `logging`, never raw `print`.  
+- **Immutability**: Use `@dataclass(frozen=True)` where possible.  
+
+---
+
+## 4) Asset Pipeline
+- **Textures**: Load via `PIL/stb_image`, upload to GPU via `moderngl`.  
+- **Meshes**: Import with `assimp` or custom `.mesh` format; optimize vertex/index buffers.  
+- **Audio**: Load compressed (OGG/Vorbis); stream long tracks, buffer short sounds.  
+- **Shaders**: GLSL stored in `assets/shaders/`; compiled & validated at runtime.  
+- **Serialization**:  
+  - JSON for dev/debug  
+  - Binary `.pak` bundles for production  
+
+---
+
+## 5) Testing & Validation
+- **Unit tests**: `pytest` required for each module.  
+- **Serialization**: Round-trip safety (`load(save(x)) == x`).  
+- **ECS**: Stress test with 100k+ entities.  
+- **Math**: Validate vector/matrix ops against numpy.  
+- **Renderer**: Render test scenes with image diffs.  
+- **Physics**: Deterministic results across runs.  
+
+---
+
+## 6) Performance Rules
+- Use `numpy` for heavy math (no Python loops).  
+- Profile with `cProfile` and `line_profiler`.  
+- Cache expensive calls (memoization).  
+- Keep game loop **<16 ms per frame** (60fps).  
+- Consider Cython or Rust extensions for bottlenecks.  
+
+---
+
+## 7) CI/CD Rules
+- Run on Linux, Windows, macOS.  
+- Steps:  
+  1. Lint with `ruff`.  
+  2. Format check with `black --check`.  
+  3. Type check with `mypy --strict`.  
+  4. Run `pytest --maxfail=1 --disable-warnings`.  
+  5. Benchmark ECS performance.  
+- Build distributables with `pyinstaller` or `briefcase`.  
+- Upload nightly builds with sample game as artifacts.  
+
+---

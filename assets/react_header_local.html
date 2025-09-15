@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>React Header - Local Version</title>
+    
+    <!-- Include React libraries locally to avoid CDN blocking -->
+    <script>
+        // Simple React-like implementation for the header
+        window.React = {
+            createElement: function(tag, props, ...children) {
+                // Create a React element object
+                const reactElement = {
+                    type: tag,
+                    props: props || {},
+                    children: children
+                };
+                
+                // Return an object that our ReactDOM can handle
+                return {
+                    _reactElement: reactElement
+                };
+            }
+        };
+        
+        // Simple ReactDOM-like implementation
+        window.ReactDOM = {
+            render: function(element, container) {
+                container.innerHTML = '';
+                
+                // If element is a React element (has _reactElement property), render it
+                if (element && typeof element === 'object' && element._reactElement) {
+                    const domElement = this._renderReactElement(element._reactElement);
+                    container.appendChild(domElement);
+                } else if (element && typeof element === 'object' && element.tagName) {
+                    // If it's already a DOM element, append it directly
+                    container.appendChild(element);
+                } else {
+                    // Fallback: try to create a text node
+                    container.appendChild(document.createTextNode(String(element)));
+                }
+            },
+            
+            _renderReactElement: function(reactElement) {
+                if (typeof reactElement === 'string' || typeof reactElement === 'number') {
+                    return document.createTextNode(reactElement);
+                }
+                
+                if (reactElement.type === 'string') {
+                    // Create DOM element
+                    const element = document.createElement(reactElement.type);
+                    
+                    // Set properties
+                    if (reactElement.props) {
+                        Object.keys(reactElement.props).forEach(key => {
+                            if (key === 'className') {
+                                element.className = reactElement.props[key];
+                            } else if (key === 'onClick') {
+                                element.addEventListener('click', reactElement.props[key]);
+                            } else if (key === 'style' && typeof reactElement.props[key] === 'object') {
+                                Object.assign(element.style, reactElement.props[key]);
+                            } else if (key.startsWith('on')) {
+                                const eventName = key.toLowerCase().substring(2);
+                                element.addEventListener(eventName, reactElement.props[key]);
+                            } else if (key !== 'children') {
+                                element.setAttribute(key, reactElement.props[key]);
+                            }
+                        });
+                    }
+                    
+                    // Render children
+                    if (reactElement.props && reactElement.props.children) {
+                        const children = Array.isArray(reactElement.props.children) 
+                            ? reactElement.props.children 
+                            : [reactElement.props.children];
+                        
+                        children.forEach(child => {
+                            if (child) {
+                                const childElement = this._renderReactElement(child);
+                                element.appendChild(childElement);
+                            }
+                        });
+                    }
+                    
+                    return element;
+                } else if (typeof reactElement.type === 'function') {
+                    // Handle function components
+                    const component = reactElement.type;
+                    const props = reactElement.props || {};
+                    const result = component(props);
+                    return this._renderReactElement(result);
+                }
+                
+                return document.createTextNode('');
+            }
+        };
+        
+        // Simple useState implementation
+        function useState(initialValue) {
+            let value = initialValue;
+            const setValue = (newValue) => {
+                value = newValue;
+                // Trigger re-render
+                if (window.currentComponent) {
+                    window.currentComponent();
+                }
+            };
+            return [value, setValue];
+        }
+        
+        // Simple useEffect implementation
+        function useEffect(callback, dependencies) {
+            callback();
+        }
+        
+        window.useState = useState;
+        window.useEffect = useEffect;
+        
+        console.log('Local React implementation loaded');
+    </script>
+    
+    <style>
+        /* EXACT global CSS variables from user's file - DARK MODE ONLY */
+        :root {
+            /* Force dark mode variables */
+            --background: #0c0c0c;
+            --foreground: #f8f8f8;
+            --card: #141414;
+            --card-foreground: #f8f8f8;
+            --popover: #141414;
+            --popover-foreground: #f8f8f8;
+            --primary: #ff6b35;
+            --primary-foreground: #ffffff;
+            --secondary: #1f1f1f;
+            --secondary-foreground: #f8f8f8;
+            --muted: #1f1f1f;
+            --muted-foreground: #a3a3a3;
+            --accent: #ff8c42;
+            --accent-foreground: #ffffff;
+            --destructive: #ef4444;
+            --destructive-foreground: #ffffff;
+            --border: #2a2a2a;
+            --input: #141414;
+            --ring: rgba(255, 107, 53, 0.5);
+            --chart-1: #ff6b35;
+            --chart-2: #ff8c42;
+            --chart-3: #a3a3a3;
+            --chart-4: #141414;
+            --chart-5: #0c0c0c;
+            --sidebar: #141414;
+            --sidebar-foreground: #f8f8f8;
+            --sidebar-primary: #0c0c0c;
+            --sidebar-primary-foreground: #f8f8f8;
+            --sidebar-accent: #ff8c42;
+            --sidebar-accent-foreground: #ffffff;
+            --sidebar-border: #2a2a2a;
+            --sidebar-ring: rgba(255, 107, 53, 0.5);
+        }
+
+        /* Force dark mode on body and html */
+        html.dark, body {
+            background-color: #0c0c0c !important;
+            color: #f8f8f8 !important;
+        }
+
+        /* EXACT utility classes from user's global CSS */
+        .animate-glow {
+            animation: glow 3s ease-in-out infinite alternate;
+        }
+
+        .animate-pulse-subtle {
+            animation: pulseSubtle 2s ease-in-out infinite;
+        }
+
+        .animate-shimmer {
+            animation: shimmer 2s linear infinite;
+        }
+
+        .glass-effect {
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            background: rgba(20, 20, 20, 0.8);
+            border: 1px solid rgba(42, 42, 42, 0.5);
+        }
+
+        .gradient-border {
+            position: relative;
+            background: linear-gradient(135deg, #141414, #1f1f1f);
+            border: 1px solid transparent;
+        }
+
+        .gradient-border::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            padding: 1px;
+            background: linear-gradient(135deg, rgba(255, 107, 53, 0.5), rgba(255, 140, 66, 0.5));
+            border-radius: inherit;
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask-composite: xor;
+            -webkit-mask-composite: xor;
+        }
+
+        .text-gradient {
+            background: linear-gradient(135deg, #ff6b35, #ff8c42);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .panel-shadow {
+            box-shadow: 0 1px 3px rgba(248, 248, 248, 0.1), 0 4px 12px rgba(248, 248, 248, 0.05), 0 16px 32px rgba(248, 248, 248, 0.02);
+        }
+
+        .professional-gradient {
+            background: linear-gradient(135deg, #141414 0%, rgba(20, 20, 20, 0.95) 25%, rgba(31, 31, 31, 0.3) 100%);
+        }
+
+        /* EXACT keyframes from user's global CSS */
+        @keyframes glow {
+            from {
+                box-shadow: 0 0 20px rgba(255, 107, 53, 0.2), 0 0 40px rgba(255, 107, 53, 0.1);
+            }
+            to {
+                box-shadow: 0 0 30px rgba(255, 107, 53, 0.4), 0 0 60px rgba(255, 107, 53, 0.2);
+            }
+        }
+
+        @keyframes pulseSubtle {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.8;
+            }
+        }
+
+        @keyframes shimmer {
+            0% {
+                background-position: -200% 0;
+            }
+            100% {
+                background-position: 200% 0;
+            }
+        }
+
+        /* EXACT base styles from user's global CSS */
+        * {
+            border-color: #2a2a2a;
+            outline-color: rgba(255, 107, 53, 0.5);
+        }
+
+        body {
+            background-color: #0c0c0c;
+            color: #f8f8f8;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* EXACT Tailwind classes with proper CSS variables */
+        .h-16 { height: 64px; }
+        .w-8 { width: 32px; }
+        .h-8 { height: 32px; }
+        .h-4 { height: 16px; }
+        .w-4 { width: 16px; }
+        .h-3 { height: 12px; }
+        .w-3 { width: 12px; }
+        .h-5 { height: 20px; }
+        .w-5 { width: 20px; }
+        .w-10 { width: 40px; }
+        .h-10 { height: 40px; }
+        .px-6 { padding-left: 24px; padding-right: 24px; }
+        .gap-6 { gap: 24px; }
+        .gap-1 { gap: 4px; }
+        .gap-2 { gap: 8px; }
+        .gap-3 { gap: 12px; }
+        .gap-4 { gap: 16px; }
+        .p-1 { padding: 4px; }
+        .px-3 { padding-left: 12px; padding-right: 12px; }
+        .py-1 { padding-top: 4px; padding-bottom: 4px; }
+        .px-2 { padding-left: 8px; padding-right: 8px; }
+        .py-0\.5 { padding-top: 2px; padding-bottom: 2px; }
+        .rounded-lg { border-radius: 8px; }
+        .rounded-md { border-radius: 6px; }
+        .rounded-xl { border-radius: 12px; }
+        .rounded-full { border-radius: 9999px; }
+        .text-sm { font-size: 14px; }
+        .text-xs { font-size: 12px; }
+        .text-lg { font-size: 18px; }
+        .font-medium { font-weight: 500; }
+        .font-bold { font-weight: 700; }
+        .font-mono { font-family: ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo, monospace; }
+        .text-green-400 { color: #4ade80; }
+        .text-blue-400 { color: #60a5fa; }
+        .text-primary { color: #ff6b35; }
+        .text-accent { color: #ff8c42; }
+        .text-foreground { color: #f8f8f8; }
+        .text-muted-foreground { color: #a3a3a3; }
+        .bg-primary { background-color: #ff6b35; }
+        .bg-accent { background-color: #ff8c42; }
+        .from-primary { --tw-gradient-from: #ff6b35; }
+        .to-accent { --tw-gradient-to: #ff8c42; }
+        .from-transparent { --tw-gradient-from: transparent; }
+        .via-white\/20 { --tw-gradient-via: rgba(255, 255, 255, 0.2); }
+        .to-transparent { --tw-gradient-to: transparent; }
+        .via-border { --tw-gradient-via: #2a2a2a; }
+        .bg-gradient-to-br { background-image: linear-gradient(to bottom right, var(--tw-gradient-stops)); }
+        .bg-gradient-to-r { background-image: linear-gradient(to right, var(--tw-gradient-stops)); }
+        .bg-gradient-to-b { background-image: linear-gradient(to bottom, var(--tw-gradient-stops)); }
+        .-skew-x-12 { transform: skewX(-12deg); }
+        .relative { position: relative; }
+        .absolute { position: absolute; }
+        .inset-0 { top: 0; right: 0; bottom: 0; left: 0; }
+        .z-10 { z-index: 10; }
+        .overflow-hidden { overflow: hidden; }
+        .mr-2 { margin-right: 8px; }
+        .shrink-0 { flex-shrink: 0; }
+        .flex { display: flex; }
+        .items-center { align-items: center; }
+        .justify-center { justify-content: center; }
+        .justify-between { justify-content: space-between; }
+        .border-b { border-bottom-width: 1px; }
+        .border { border-width: 1px; }
+        .border-border\/50 { border-color: rgba(42, 42, 42, 0.5); }
+        .border-border\/30 { border-color: rgba(42, 42, 42, 0.3); }
+        .bg-background { background-color: #0c0c0c; }
+        .text-foreground { color: #f8f8f8; }
+        .antialiased { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+    </style>
+</head>
+<body class="bg-background text-foreground antialiased m-0 p-0">
+    <div id="root">
+        <!-- Debug fallback to show what's happening -->
+        <div id="debug-fallback" style="height: 64px; background: #1a1a1a; color: white; display: flex; align-items: center; justify-content: center; font-family: monospace; font-size: 12px;">
+            Loading React component... (If you see this, React failed to render)
+        </div>
+    </div>
+    
+    <script>
+        console.log('Starting local React header...');
+        
+        // Icon components (EXACTLY matching user's JSX)
+        const PlayIcon = ({ className }) => React.createElement('svg', {
+            className: className,
+            width: "24",
+            height: "24",
+            viewBox: "0 0 24 24",
+            fill: "none",
+            xmlns: "http://www.w3.org/2000/svg"
+        }, React.createElement('path', {
+            d: "M8 5v14l11-7z",
+            fill: "currentColor"
+        }));
+        
+        const PauseIcon = ({ className }) => React.createElement('div', {
+            className: className,
+            style: {
+                display: 'flex',
+                gap: '2px',
+                alignItems: 'center',
+                justifyContent: 'center'
+            }
+        }, 
+        React.createElement('div', { style: { width: '3px', height: '16px', background: 'currentColor' } }),
+        React.createElement('div', { style: { width: '3px', height: '16px', background: 'currentColor' } })
+        );
+        
+        const StopIcon = ({ className }) => React.createElement('div', {
+            className: className,
+            style: {
+                width: '12px',
+                height: '12px',
+                background: 'currentColor'
+            }
+        });
+        
+        const RotateIcon = ({ className }) => React.createElement('div', {
+            className: className,
+            style: {
+                width: '16px',
+                height: '16px',
+                border: '2px solid currentColor',
+                borderRadius: '50%',
+                position: 'relative'
+            }
+        }, React.createElement('div', {
+            style: {
+                position: 'absolute',
+                top: '-2px',
+                right: '-2px',
+                width: '6px',
+                height: '6px',
+                border: '2px solid currentColor',
+                borderLeft: 'none',
+                borderBottom: 'none',
+                borderRadius: '0 6px 0 0'
+            }
+        }));
+        
+        const Move3DIcon = ({ className }) => React.createElement('div', {
+            className: className,
+            style: {
+                width: '16px',
+                height: '16px',
+                position: 'relative'
+            }
+        }, 
+        React.createElement('div', { style: { width: '12px', height: '2px', background: 'currentColor', position: 'absolute', top: '7px', left: '2px' } }),
+        React.createElement('div', { style: { width: '2px', height: '12px', background: 'currentColor', position: 'absolute', left: '7px', top: '2px' } })
+        );
+        
+        const MaximizeIcon = ({ className }) => React.createElement('div', {
+            className: className,
+            style: {
+                width: '16px',
+                height: '16px',
+                position: 'relative'
+            }
+        }, 
+        React.createElement('div', { style: { width: '12px', height: '12px', border: '2px solid currentColor', position: 'absolute', top: '0px', left: '0px' } }),
+        React.createElement('div', { style: { width: '4px', height: '4px', background: 'currentColor', position: 'absolute', top: '4px', left: '4px' } })
+        );
+        
+        const NexlifyIcon = ({ className }) => React.createElement('div', {
+            className: className,
+            style: {
+                width: '20px',
+                height: '20px',
+                background: 'white',
+                borderRadius: '4px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '14px',
+                fontWeight: 'bold',
+                color: '#ff6b35'
+            }
+        }, 'N');
+        
+        const ActivityIcon = ({ className }) => React.createElement('div', {
+            className: className,
+            style: {
+                width: '12px',
+                height: '12px',
+                background: 'currentColor',
+                borderRadius: '2px'
+            }
+        });
+        
+        const MemoryStickIcon = ({ className }) => React.createElement('div', {
+            className: className,
+            style: {
+                width: '12px',
+                height: '12px',
+                background: 'currentColor',
+                borderRadius: '2px'
+            }
+        });
+        
+        const WifiIcon = ({ className }) => React.createElement('div', {
+            className: className,
+            style: {
+                width: '12px',
+                height: '12px',
+                background: 'currentColor',
+                borderRadius: '50%'
+            }
+        });
+        
+        const ChevronRightIcon = ({ className }) => React.createElement('div', {
+            className: className,
+            style: {
+                width: '12px',
+                height: '12px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '10px'
+            }
+        }, '>');
+        
+        const SettingsIcon = ({ className }) => React.createElement('div', {
+            className: className,
+            style: {
+                width: '16px',
+                height: '16px',
+                background: 'currentColor',
+                borderRadius: '50%',
+                position: 'relative'
+            }
+        }, React.createElement('div', {
+            style: {
+                position: 'absolute',
+                top: '2px',
+                left: '2px',
+                width: '12px',
+                height: '12px',
+                border: '2px solid white',
+                borderRadius: '50%'
+            }
+        }));
+        
+        // UI Components (EXACTLY matching user's JSX)
+        const ToolbarButton = ({ children, active, onClick, tooltip, className = "" }) => React.createElement('button', {
+            onClick: onClick,
+            title: tooltip,
+            className: `flex items-center justify-center w-8 h-8 rounded-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-1 ${
+                active 
+                    ? 'bg-gradient-to-b from-primary to-primary/90 text-primary-foreground shadow-md shadow-primary/25' 
+                    : 'bg-transparent hover:bg-accent/20 hover:shadow-sm text-foreground'
+            } ${className}`,
+            style: {
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: '32px',
+                height: '32px',
+                borderRadius: '6px',
+                border: 'none',
+                background: active ? 'linear-gradient(to bottom, #ff6b35, rgba(255, 107, 53, 0.9))' : 'transparent',
+                color: active ? 'white' : '#f8f8f8',
+                cursor: 'pointer',
+                transition: 'all 0.2s'
+            }
+        }, children);
+        
+        const Separator = ({ orientation, className }) => React.createElement('div', {
+            className: `w-px h-8 bg-gradient-to-b from-transparent via-border to-transparent ${className}`,
+            style: {
+                width: '1px',
+                height: '32px',
+                background: 'linear-gradient(to bottom, transparent, #2a2a2a, transparent)'
+            }
+        });
+        
+        const ThemeToggle = () => React.createElement('button', {
+            className: "w-8 h-8 rounded-md border border-white/20 text-white hover:bg-white/10 transition-colors",
+            style: {
+                width: '32px',
+                height: '32px',
+                borderRadius: '6px',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                color: 'white',
+                background: 'transparent',
+                cursor: 'pointer',
+                fontSize: '16px'
+            }
+        }, '🌙');
+        
+        const ProfessionalButton = ({ variant, size, gradient, className, children }) => React.createElement('button', {
+            className: `px-3 py-1.5 text-sm border border-border rounded-md hover:bg-accent/20 transition-colors ${className}`,
+            style: {
+                padding: '6px 12px',
+                fontSize: '14px',
+                border: '1px solid #2a2a2a',
+                borderRadius: '6px',
+                background: 'transparent',
+                color: '#f8f8f8',
+                cursor: 'pointer'
+            }
+        }, children);
+        
+        const IDEHeader = () => {
+            const [isPlaying, setIsPlaying] = useState(false);
+            const [fps, setFps] = useState(60);
+            const [memoryUsage, setMemoryUsage] = useState(245);
+            const [activeTab] = useState("MainScene");
+            
+            // Simulate performance updates
+            useEffect(() => {
+                const interval = setInterval(() => {
+                    setFps(Math.floor(Math.random() * 10) + 55);
+                    setMemoryUsage(Math.floor(Math.random() * 10) + 240);
+                }, 1000);
+                return () => clearInterval(interval);
+            }, []);
+            
+            // Communication with PyQt6
+            const notifyPyQt6 = (event, data) => {
+                console.log('PyQt6 Event:', event, data);
+            };
+            
+            return React.createElement('div', {
+                className: "h-16 glass-effect border-b border-border/50 flex items-center justify-between px-6 shrink-0 panel-shadow",
+                style: {
+                    height: '64px',
+                    background: 'rgba(20, 20, 20, 0.8)',
+                    borderBottom: '1px solid rgba(42, 42, 42, 0.5)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    padding: '0 24px',
+                    flexShrink: 0,
+                    boxShadow: '0 1px 3px rgba(248, 248, 248, 0.1), 0 4px 12px rgba(248, 248, 248, 0.05), 0 16px 32px rgba(248, 248, 248, 0.02)'
+                }
+            }, [
+                // Left section
+                React.createElement('div', {
+                    key: 'left',
+                    style: {
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '24px'
+                    }
+                }, [
+                    // Play Controls
+                    React.createElement('div', {
+                        key: 'play-controls',
+                        className: "flex items-center gap-1 p-1 professional-gradient rounded-lg border border-border/50 panel-shadow",
+                        style: {
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '4px',
+                            padding: '4px',
+                            background: 'linear-gradient(135deg, #141414 0%, rgba(20, 20, 20, 0.95) 25%, rgba(31, 31, 31, 0.3) 100%)',
+                            borderRadius: '8px',
+                            border: '1px solid rgba(42, 42, 42, 0.5)'
+                        }
+                    }, [
+                        ToolbarButton({
+                            active: isPlaying,
+                            onClick: () => {
+                                const newState = !isPlaying;
+                                setIsPlaying(newState);
+                                notifyPyQt6('playStateChanged', newState);
+                            },
+                            tooltip: isPlaying ? "Pause" : "Play"
+                        }, isPlaying ? PauseIcon({ className: "h-4 w-4" }) : PlayIcon({ className: "h-4 w-4" })),
+                        ToolbarButton({ tooltip: "Stop" }, StopIcon({ className: "h-3 w-3" })),
+                        ToolbarButton({ tooltip: "Reset" }, RotateIcon({ className: "h-4 w-4" }))
+                    ]),
+                    
+                    // Transform Tools
+                    React.createElement('div', {
+                        key: 'transform-tools',
+                        className: "flex items-center gap-1 p-1 professional-gradient rounded-lg border border-border/50 panel-shadow",
+                        style: {
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '4px',
+                            padding: '4px',
+                            background: 'linear-gradient(135deg, #141414 0%, rgba(20, 20, 20, 0.95) 25%, rgba(31, 31, 31, 0.3) 100%)',
+                            borderRadius: '8px',
+                            border: '1px solid rgba(42, 42, 42, 0.5)'
+                        }
+                    }, [
+                        ToolbarButton({ tooltip: "Move Tool", active: true }, Move3DIcon({ className: "h-4 w-4" })),
+                        ToolbarButton({ tooltip: "Rotate Tool" }, RotateIcon({ className: "h-4 w-4" })),
+                        ToolbarButton({ tooltip: "Scale Tool" }, MaximizeIcon({ className: "h-4 w-4" }))
+                    ]),
+                    
+                    // Separator
+                    Separator({ orientation: "vertical", className: "h-8 bg-gradient-to-b from-transparent via-border to-transparent" }),
+                    
+                    // Logo and Title
+                    React.createElement('div', {
+                        key: 'logo-title',
+                        className: "flex items-center gap-2",
+                        style: {
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '8px'
+                        }
+                    }, [
+                        React.createElement('div', {
+                            className: "w-10 h-10 bg-gradient-to-br from-primary to-accent rounded-xl flex items-center justify-center panel-shadow animate-shimmer relative overflow-hidden",
+                            style: {
+                                width: '40px',
+                                height: '40px',
+                                background: 'linear-gradient(to bottom right, #ff6b35, #ff8c42)',
+                                borderRadius: '12px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                position: 'relative',
+                                overflow: 'hidden'
+                            }
+                        }, [
+                            React.createElement('div', {
+                                className: "absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12 animate-shimmer",
+                                style: {
+                                    position: 'absolute',
+                                    inset: '0',
+                                    background: 'linear-gradient(to right, transparent, rgba(255, 255, 255, 0.2), transparent)',
+                                    transform: 'skewX(-12deg)'
+                                }
+                            }),
+                            NexlifyIcon({ className: "h-5 w-5 text-white relative z-10" })
+                        ]),
+                        React.createElement('div', {
+                            style: { display: 'flex', flexDirection: 'column', gap: '4px' }
+                        }, [
+                            React.createElement('span', {
+                                className: "text-lg font-bold text-gradient",
+                                style: {
+                                    fontSize: '18px',
+                                    fontWeight: '700',
+                                    background: 'linear-gradient(135deg, #ff6b35, #ff8c42)',
+                                    WebkitBackgroundClip: 'text',
+                                    WebkitTextFillColor: 'transparent',
+                                    backgroundClip: 'text'
+                                }
+                            }, "Nexlify"),
+                            React.createElement('div', {
+                                className: "flex items-center gap-2",
+                                style: { display: 'flex', alignItems: 'center', gap: '8px' }
+                            }, [
+                                React.createElement('span', {
+                                    className: "text-xs px-2 py-0.5 gradient-border rounded-full text-primary font-medium",
+                                    style: {
+                                        fontSize: '12px',
+                                        padding: '2px 8px',
+                                        background: 'linear-gradient(135deg, #141414, #1f1f1f)',
+                                        border: '1px solid rgba(255, 107, 53, 0.5)',
+                                        borderRadius: '9999px',
+                                        color: '#ff6b35',
+                                        fontWeight: '500'
+                                    }
+                                }, "Pro"),
+                                React.createElement('span', {
+                                    className: "text-xs text-muted-foreground",
+                                    style: { fontSize: '12px', color: '#a3a3a3' }
+                                }, "v2.1.0")
+                            ])
+                        ])
+                    ]),
+                    
+                    // Breadcrumb
+                    React.createElement('div', {
+                        key: 'breadcrumb',
+                        className: "flex items-center gap-2 text-sm text-muted-foreground",
+                        style: {
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '8px',
+                            fontSize: '14px',
+                            color: '#a3a3a3'
+                        }
+                    }, [
+                        React.createElement('span', {}, "Project"),
+                        ChevronRightIcon({ className: "h-3 w-3" }),
+                        React.createElement('span', {}, "Scenes"),
+                        ChevronRightIcon({ className: "h-3 w-3" }),
+                        React.createElement('span', {
+                            className: "text-foreground font-medium",
+                            style: { color: '#f8f8f8', fontWeight: '500' }
+                        }, activeTab)
+                    ])
+                ]),
+                
+                // Right section
+                React.createElement('div', {
+                    key: 'right',
+                    className: "flex items-center gap-3",
+                    style: {
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '12px'
+                    }
+                }, [
+                    // Performance Metrics
+                    React.createElement('div', {
+                        key: 'performance',
+                        className: "flex items-center gap-4 px-3 py-1 glass-effect rounded-lg border border-border/30 panel-shadow",
+                        style: {
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '16px',
+                            padding: '4px 12px',
+                            background: 'rgba(20, 20, 20, 0.8)',
+                            borderRadius: '8px',
+                            border: '1px solid rgba(42, 42, 42, 0.3)'
+                        }
+                    }, [
+                        React.createElement('div', {
+                            className: "flex items-center gap-1",
+                            style: { display: 'flex', alignItems: 'center', gap: '4px' }
+                        }, [
+                            ActivityIcon({ className: "h-3 w-3 text-green-400 animate-pulse-subtle" }),
+                            React.createElement('span', {
+                                className: "text-xs font-mono",
+                                style: { fontSize: '12px', fontFamily: 'monospace', color: '#4ade80' }
+                            }, `${fps} FPS`)
+                        ]),
+                        React.createElement('div', {
+                            className: "flex items-center gap-1",
+                            style: { display: 'flex', alignItems: 'center', gap: '4px' }
+                        }, [
+                            MemoryStickIcon({ className: "h-3 w-3 text-blue-400" }),
+                            React.createElement('span', {
+                                className: "text-xs font-mono",
+                                style: { fontSize: '12px', fontFamily: 'monospace', color: '#60a5fa' }
+                            }, `${memoryUsage}MB`)
+                        ]),
+                        React.createElement('div', {
+                            className: "flex items-center gap-1",
+                            style: { display: 'flex', alignItems: 'center', gap: '4px' }
+                        }, [
+                            WifiIcon({ className: "h-3 w-3 text-green-400 animate-pulse-subtle" }),
+                            React.createElement('span', {
+                                className: "text-xs",
+                                style: { fontSize: '12px', color: '#4ade80' }
+                            }, "Online")
+                        ])
+                    ]),
+                    
+                    ThemeToggle(),
+                    ProfessionalButton({ variant: "outline", size: "sm", gradient: false, className: "panel-shadow" }, [
+                        SettingsIcon({ className: "h-4 w-4 mr-2" }),
+                        "Settings"
+                    ])
+                ])
+            ]);
+        };
+        
+        // Render the component
+        try {
+            console.log('Attempting to render local React component...');
+            
+            const rootElement = document.getElementById('root');
+            if (!rootElement) {
+                throw new Error('Root element not found');
+            }
+            
+            // Clear the fallback content
+            rootElement.innerHTML = '';
+            
+            // Render the component - call the function, don't pass it as a string
+            const headerElement = IDEHeader();
+            ReactDOM.render(headerElement, rootElement);
+            console.log('Local React component rendered successfully!');
+            
+            // Store reference for re-renders
+            window.currentComponent = () => {
+                const headerElement = IDEHeader();
+                ReactDOM.render(headerElement, rootElement);
+            };
+            
+        } catch (error) {
+            console.error('Error rendering local React component:', error);
+            // Fallback: show error message
+            document.getElementById('root').innerHTML = `
+                <div style="color: white; padding: 20px; background: #ef4444;">
+                    <h3>Local React Component Error</h3>
+                    <p>${error.message}</p>
+                    <p>Check console for details.</p>
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>
